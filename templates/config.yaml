@@ -1,0 +1,321 @@
+# Oh-My-PM-Skills 模板引擎配置
+# Template Engine Configuration for Oh-My-PM-Skills
+
+# ====================
+# 模板引擎设置
+# ====================
+template_engine:
+  name: "handlebars"
+  version: "4.7.7"
+  encoding: "UTF-8"
+
+# ====================
+# 默认值配置
+# ====================
+defaults:
+  # 日期格式
+  date_format: "YYYY-MM-DD"
+  datetime_format: "YYYY-MM-DD HH:mm:ss"
+
+  # 货币设置
+  currency: "USD"
+  currency_symbol: "$"
+  locale: "zh-CN"
+
+  # 数字格式
+  decimal_places: 2
+  thousands_separator: ","
+
+  # 语言设置
+  language: "zh-CN"
+  fallback_language: "en-US"
+
+# ====================
+# 输出配置
+# ====================
+output:
+  # 输出格式
+  format: "markdown"
+  formats_supported:
+    - "markdown"
+    - "html"
+    - "pdf"
+    - "json"
+
+  # 输出目录
+  directory: "./output"
+
+  # 文件命名规则
+  naming_pattern: "{project_name}_{template_type}_{date}.{extension}"
+
+  # 是否覆盖已存在文件
+  overwrite: false
+
+# ====================
+# 模板路径配置
+# ====================
+templates:
+  # 基础路径
+  base_path: "./templates"
+
+  # 模板分类
+  categories:
+    analytics: "analytics-report.md"
+    forecast: "forecast-report.md"
+    prd:
+      lean: "prd/prd-lean.md"
+      standard: "prd/prd-standard.md"
+      security: "prd/prd-security.md"
+    security:
+      threat: "security/threat-stride.md"
+      compliance: "security/compliance-soc2.md"
+      test_plan: "security/security-test-plan.md"
+    research:
+      market: "research/market-research.md"
+      jtbd: "research/jtbd-analysis.md"
+      competitor: "research/competitor-analysis.md"
+
+# ====================
+# 数据验证规则
+# ====================
+validation:
+  # 必填字段（所有模板通用）
+  required_fields:
+    - "project_name"
+    - "version"
+    - "date"
+    - "author"
+
+  # 各模板特定必填字段
+  template_requirements:
+    prd:
+      - "status"
+      - "product_vision"
+    security:
+      - "security_level"
+      - "threat_modeling_methodology"
+    analytics:
+      - "analysis_period"
+      - "data_source"
+
+  # 字段类型验证
+  field_types:
+    version: "semver"
+    date: "date"
+    email: "email"
+    url: "url"
+    percentage: "number(0-100)"
+
+# ====================
+# 自定义辅助函数
+# ====================
+helpers:
+  # 日期格式化
+  formatDate:
+    description: "格式化日期"
+    parameters:
+      - name: "date"
+        type: "string"
+      - name: "format"
+        type: "string"
+        default: "YYYY-MM-DD"
+
+  # 货币格式化
+  formatCurrency:
+    description: "格式化货币"
+    parameters:
+      - name: "amount"
+        type: "number"
+      - name: "currency"
+        type: "string"
+        default: "USD"
+
+  # 数字格式化
+  formatNumber:
+    description: "格式化数字"
+    parameters:
+      - name: "number"
+        type: "number"
+      - name: "decimals"
+        type: "number"
+        default: 2
+
+  # 百分比计算
+  calculatePercentage:
+    description: "计算百分比"
+    parameters:
+      - name: "value"
+        type: "number"
+      - name: "total"
+        type: "number"
+    returns: "number(0-100)"
+
+  # DREAD 评分计算
+  calculateDread:
+    description: "计算 DREAD 风险评分"
+    parameters:
+      - name: "damage"
+        type: "number"
+      - name: "reproducibility"
+        type: "number"
+      - name: "exploitability"
+        type: "number"
+      - name: "affected"
+        type: "number"
+      - name: "discoverability"
+        type: "number"
+    returns: "number(1-10)"
+    formula: "(damage + reproducibility + exploitability + affected + discoverability) / 5"
+
+  # 风险等级评估
+  assessRiskLevel:
+    description: "根据 DREAD 评分评估风险等级"
+    parameters:
+      - name: "score"
+        type: "number"
+    returns: "string"
+    mapping:
+      low: "1-3"
+      medium: "4-6"
+      high: "7-10"
+
+  # 状态标签
+  statusBadge:
+    description: "生成状态标签"
+    parameters:
+      - name: "status"
+        type: "string"
+    returns: "string"
+    styles:
+      completed: "🟢"
+      in_progress: "🟡"
+      pending: "⚪"
+      blocked: "🔴"
+      cancelled: "⚫"
+
+# ====================
+# 数据源配置
+# ====================
+data_sources:
+  # 示例数据
+  examples:
+    directory: "./examples"
+    files:
+      analytics: "analytics-sample-data.json"
+      forecast: "forecast-sample-data.json"
+      prd: "prd-sample-data.json"
+
+  # 外部数据源
+  external:
+    enabled: false
+    api_timeout: 30000
+    retry_attempts: 3
+
+# ====================
+# 缓存配置
+# ====================
+cache:
+  enabled: true
+  ttl: 3600  # 秒
+  directory: "./cache"
+
+# ====================
+# 日志配置
+# ====================
+logging:
+  level: "info"  # debug, info, warn, error
+  format: "json"
+  output: "console"
+
+# ====================
+# 安全配置
+# ====================
+security:
+  # 输入清理
+  sanitize_input: true
+
+  # 允许的 HTML 标签（用于 HTML 输出）
+  allowed_tags:
+    - "p"
+    - "br"
+    - "strong"
+    - "em"
+    - "ul"
+    - "ol"
+    - "li"
+    - "h1"
+    - "h2"
+    - "h3"
+    - "h4"
+    - "h5"
+    - "h6"
+    - "table"
+    - "thead"
+    - "tbody"
+    - "tr"
+    - "th"
+    - "td"
+
+  # 最大文件大小
+  max_file_size: "10MB"
+
+# ====================
+# 本地化配置
+# ====================
+i18n:
+  # 支持的语言
+  supported_languages:
+    - code: "zh-CN"
+      name: "简体中文"
+      date_format: "YYYY-MM-DD"
+    - code: "zh-TW"
+      name: "繁體中文"
+      date_format: "YYYY/MM/DD"
+    - code: "en-US"
+      name: "English (US)"
+      date_format: "MM/DD/YYYY"
+    - code: "ja-JP"
+      name: "日本語"
+      date_format: "YYYY-MM-DD"
+
+  # 翻译文件路径
+  translations_path: "./locales"
+
+# ====================
+# 性能配置
+# ====================
+performance:
+  # 并行处理
+  parallel_processing: true
+  max_workers: 4
+
+  # 流式处理（大文件）
+  streaming_enabled: true
+  chunk_size: "64KB"
+
+# ====================
+# 插件配置
+# ====================
+plugins:
+  enabled: false
+  directory: "./plugins"
+  autoload: true
+
+# ====================
+# 开发模式
+# ====================
+development:
+  enabled: false
+  debug_mode: false
+  pretty_print: true
+  line_numbers: true
+
+# ====================
+# 版本信息
+# ====================
+version:
+  major: 1
+  minor: 0
+  patch: 0
+  pre_release: ""
+  build_metadata: ""

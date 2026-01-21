@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "oh-my-pm-skills-marketplace",
+  "description": "面向产品经理的 AI 技能集合市场 - 从市场研究到 PRD 生成的全流程支持",
+  "owner": {
+    "name": "oh-my-pm-skills",
+    "email": "noreply@github.com"
+  },
+  "plugins": [
+    {
+      "name": "oh-my-pm-skills",
+      "description": "产品经理 AI 技能集合 - PRD生成、威胁建模、数据分析、JTBD分析",
+      "version": "1.0.0",
+      "author": {
+        "name": "Zhengyu Li",
+        "email": "noreply@github.com"
+      },
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

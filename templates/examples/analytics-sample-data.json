@@ -1,0 +1,240 @@
+{
+  "project_name": "示例分析报告",
+  "version": "1.0.0",
+  "date": "2024-01-15",
+  "author": "数据分析师",
+  "analysis_period": "2024-01-01 至 2024-01-14",
+  "data_source": "用户事件追踪系统",
+
+  "key_findings": [
+    {
+      "finding": "日活跃用户增长 25%，达到 50,000 人",
+      "impact": "高",
+      "confidence": 95
+    },
+    {
+      "finding": "转化率提升 3.5 个百分点",
+      "impact": "中",
+      "confidence": 90
+    },
+    {
+      "finding": "核心功能使用率从 40% 提升至 58%",
+      "impact": "高",
+      "confidence": 92
+    }
+  ],
+
+  "executive_summary": {
+    "overview": "本分析周期内产品表现强劲，所有关键指标均呈现积极趋势。用户参与度显著提升，商业化进程加速推进。",
+    "highlights": [
+      "DAU 突破 50,000 大关",
+      "A/B 测试结果显示新版本转化率提升 15%",
+      "付费用户数增长 40%"
+    ],
+    "recommendations": [
+      "继续优化核心功能体验",
+      "扩大营销投入以维持增长势头",
+      "关注用户留存，特别是 D7 留存"
+    ]
+  },
+
+  "user_metrics": {
+    "dau": 50000,
+    "mau": 150000,
+    "dau_mau_ratio": 0.33,
+    "new_users": 8000,
+    "returning_users": 42000,
+    "user_growth_rate": 0.25,
+
+    "user_growth_chart": {
+      "title": "用户增长趋势",
+      "x_axis": "日期",
+      "y_axis": "用户数",
+      "data": [
+        { "date": "2024-01-01", "dau": 40000, "new_users": 6000 },
+        { "date": "2024-01-07", "dau": 45000, "new_users": 7000 },
+        { "date": "2024-01-14", "dau": 50000, "new_users": 8000 }
+      ]
+    },
+
+    "retention": {
+      "d1": 0.45,
+      "d7": 0.28,
+      "d30": 0.15,
+      "cohort_analysis": [
+        {
+          "cohort": "2024-01-01",
+          "d1": 0.42,
+          "d7": 0.25,
+          "d30": 0.12
+        },
+        {
+          "cohort": "2024-01-08",
+          "d1": 0.48,
+          "d7": 0.30,
+          "d30": 0.16
+        }
+      ]
+    }
+  },
+
+  "conversion_metrics": {
+    "funnel_stages": [
+      { "stage": "访问", "users": 100000, "conversion_rate": 1.0 },
+      { "stage": "注册", "users": 20000, "conversion_rate": 0.20 },
+      { "stage": "激活", "users": 12000, "conversion_rate": 0.60 },
+      { "stage": "付费", "users": 2400, "conversion_rate": 0.20 }
+    ],
+    "overall_conversion_rate": 0.024,
+    "dropoff_points": [
+      { "stage": "注册", "dropoff_rate": 0.80, "reason": "表单过长" },
+      { "stage": "付费", "dropoff_rate": 0.80, "reason": "价格敏感" }
+    ]
+  },
+
+  "ab_tests": [
+    {
+      "test_name": "首页改版测试",
+      "test_id": "AB-001",
+      "start_date": "2024-01-01",
+      "end_date": "2024-01-14",
+      "status": "完成",
+
+      "variants": [
+        {
+          "name": "对照组 (A)",
+          "traffic_allocation": 0.5,
+          "sample_size": 10000,
+          "conversion_rate": 0.12,
+          "revenue_per_user": 8.5
+        },
+        {
+          "name": "实验组 (B)",
+          "traffic_allocation": 0.5,
+          "sample_size": 10000,
+          "conversion_rate": 0.138,
+          "revenue_per_user": 9.8
+        }
+      ],
+
+      "statistical_significance": {
+        "test": "Z-test",
+        "z_score": 5.2,
+        "p_value": 0.0001,
+        "confidence_level": 99.99,
+        "is_significant": true
+      },
+
+      "recommendation": "全量发布实验组 (B) 版本"
+    }
+  ],
+
+  "revenue_metrics": {
+    "total_revenue": 150000,
+    "revenue_growth": 0.40,
+    "arpu": 3.0,
+    "arppu": 62.5,
+    "ltv": 180,
+    "cac": 45,
+    "ltv_cac_ratio": 4.0,
+
+    "revenue_by_source": [
+      { "source": "订阅", "amount": 90000, "percentage": 60 },
+      { "source": "广告", "amount": 45000, "percentage": 30 },
+      { "source": "增值服务", "amount": 15000, "percentage": 10 }
+    ],
+
+    "mrr": 125000,
+    "arr": 1500000,
+    "churn_rate": 0.05,
+    "net_revenue_retention": 1.15
+  },
+
+  "anomaly_detection": {
+    "anomalies": [
+      {
+        "metric": "DAU",
+        "detected_date": "2024-01-10",
+        "expected_value": 45000,
+        "actual_value": 52000,
+        "deviation": 15.6,
+        "severity": "positive",
+        "root_cause": "病毒营销活动效果显著"
+      },
+      {
+        "metric": "转化率",
+        "detected_date": "2024-01-12",
+        "expected_value": 0.12,
+        "actual_value": 0.09,
+        "deviation": -25.0,
+        "severity": "negative",
+        "root_cause": "支付网关临时故障"
+      }
+    ]
+  },
+
+  "segmentation_analysis": {
+    "by_acquisition_channel": [
+      {
+        "channel": "自然搜索",
+        "users": 20000,
+        "conversion_rate": 0.15,
+        "ltv": 200
+      },
+      {
+        "channel": "付费广告",
+        "users": 15000,
+        "conversion_rate": 0.10,
+        "ltv": 150
+      },
+      {
+        "channel": "社交媒体",
+        "users": 10000,
+        "conversion_rate": 0.08,
+        "ltv": 120
+      }
+    ],
+
+    "by_user_type": [
+      {
+        "type": "免费用户",
+        "count": 47000,
+        "percentage": 94,
+        "avg_revenue": 0.5
+      },
+      {
+        "type": "付费用户",
+        "count": 3000,
+        "percentage": 6,
+        "avg_revenue": 50
+      }
+    ]
+  },
+
+  "recommendations": [
+    {
+      "priority": "P0",
+      "recommendation": "修复支付网关稳定性问题",
+      "impact": "高",
+      "effort": "中",
+      "owner": "技术团队",
+      "due_date": "2024-01-20"
+    },
+    {
+      "priority": "P1",
+      "recommendation": "优化 D7 留存率",
+      "impact": "高",
+      "effort": "高",
+      "owner": "产品团队",
+      "due_date": "2024-02-01"
+    },
+    {
+      "priority": "P1",
+      "recommendation": "扩大病毒营销活动规模",
+      "impact": "中",
+      "effort": "低",
+      "owner": "市场团队",
+      "due_date": "2024-01-25"
+    }
+  ]
+}

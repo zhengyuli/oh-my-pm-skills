@@ -1,0 +1,458 @@
+{
+  "project_name": "示例预测报告",
+  "version": "1.0.0",
+  "date": "2024-01-15",
+  "author": "数据科学家",
+  "forecast_type": "用户增长与收入预测",
+  "forecast_method": "Logistic Growth Model + Bass Diffusion",
+  "confidence_level": 95,
+  "forecast_horizon": "36个月",
+
+  "executive_summary": {
+    "outlook": "基于当前增长趋势和市场分析，预期产品将在未来 3 年内达到 200 万用户，年收入突破 1500 万美元。",
+    "key_assumptions": [
+      "市场持续增长，CAGR 为 25%",
+      "营销投入按计划增加",
+      "竞品格局保持相对稳定",
+      "无重大技术或法规变化"
+    ],
+    "confidence_level": "中高",
+    "risk_factors": [
+      "竞争加剧可能影响增长速度",
+      "经济下行可能影响付费意愿",
+      "技术变革可能使现有方案过时"
+    ]
+  },
+
+  "market_size": {
+    "tam": {
+      "name": "TAM (Total Addressable Market)",
+      "value": 5000000000,
+      "description": "全球潜在市场总额",
+      "calculation_method": "Top-down",
+      "assumptions": "全球中小企业数量 × 平均年订阅费用"
+    },
+    "sam": {
+      "name": "SAM (Serviceable Addressable Market)",
+      "value": 1000000000,
+      "description": "可服务的市场",
+      "calculation_method": "Bottom-up",
+      "assumptions": "目标区域市场 × 可触达客户数"
+    },
+    "som": {
+      "name": "SOM (Serviceable Obtainable Market)",
+      "value": 50000000,
+      "description": "可获得的市场",
+      "calculation_method": "基于当前市占率推算",
+      "assumptions": "3 年内获得 SAM 的 5% 市场份额"
+    },
+
+    "market_size_chart": {
+      "title": "市场规模金字塔",
+      "data": [
+        { "segment": "TAM", "value": 5000, "color": "#ff6b6b" },
+        { "segment": "SAM", "value": 1000, "color": "#4ecdc4" },
+        { "segment": "SOM", "value": 50, "color": "#45b7d1" }
+      ]
+    }
+  },
+
+  "user_growth_forecast": {
+    "model": "Logistic Growth",
+    "parameters": {
+      "carrying_capacity": 2000000,
+      "growth_rate": 0.15,
+      "inflection_point": 18
+    },
+
+    "forecast": [
+      {
+        "period": "2024 Q1",
+        "users": 50000,
+        "growth_rate": 0.25,
+        "new_users": 10000,
+        "churn_users": 2000
+      },
+      {
+        "period": "2024 Q2",
+        "users": 68000,
+        "growth_rate": 0.36,
+        "new_users": 18000,
+        "churn_users": 3000
+      },
+      {
+        "period": "2024 Q3",
+        "users": 90000,
+        "growth_rate": 0.32,
+        "new_users": 22000,
+        "churn_users": 4000
+      },
+      {
+        "period": "2024 Q4",
+        "users": 120000,
+        "growth_rate": 0.33,
+        "new_users": 30000,
+        "churn_users": 5000
+      },
+      {
+        "period": "2025 Q1",
+        "users": 160000,
+        "growth_rate": 0.33,
+        "new_users": 40000,
+        "churn_users": 7000
+      },
+      {
+        "period": "2025 Q2",
+        "users": 210000,
+        "growth_rate": 0.31,
+        "new_users": 50000,
+        "churn_users": 9000
+      }
+    ],
+
+    "confidence_intervals": [
+      {
+        "period": "2024年底",
+        "lower_bound": 100000,
+        "expected": 120000,
+        "upper_bound": 140000
+      },
+      {
+        "period": "2025年底",
+        "lower_bound": 350000,
+        "expected": 420000,
+        "upper_bound": 500000
+      },
+      {
+        "period": "2026年底",
+        "lower_bound": 800000,
+        "expected": 1000000,
+        "upper_bound": 1200000
+      }
+    ],
+
+    "growth_chart": {
+      "title": "用户增长预测",
+      "x_axis": "时间",
+      "y_axis": "用户数",
+      "series": [
+        { "name": "预期增长", "data": [50000, 68000, 90000, 120000, 160000, 210000] },
+        { "name": "置信区间上限", "data": [60000, 82000, 110000, 140000, 190000, 250000] },
+        { "name": "置信区间下限", "data": [40000, 54000, 70000, 100000, 130000, 170000] }
+      ]
+    }
+  },
+
+  "revenue_forecast": {
+    "model": "ARIMA + 基于用户的收入模型",
+
+    "assumptions": {
+      "arpu": 100,
+      "arpu_growth_rate": 0.05,
+      "paying_user_percentage": 0.15,
+      "churn_rate": 0.05
+    },
+
+    "forecast": [
+      {
+        "period": "2024 Q1",
+        "total_users": 50000,
+        "paying_users": 7500,
+        "arpu": 100,
+        "mrr": 750000,
+        "arr": 9000000
+      },
+      {
+        "period": "2024 Q2",
+        "total_users": 68000,
+        "paying_users": 10200,
+        "arpu": 105,
+        "mrr": 1071000,
+        "arr": 12852000
+      },
+      {
+        "period": "2024 Q3",
+        "total_users": 90000,
+        "paying_users": 13500,
+        "arpu": 110,
+        "mrr": 1485000,
+        "arr": 17820000
+      },
+      {
+        "period": "2024 Q4",
+        "total_users": 120000,
+        "paying_users": 18000,
+        "arpu": 116,
+        "mrr": 2088000,
+        "arr": 25056000
+      }
+    ],
+
+    "revenue_streams": [
+      {
+        "stream": "订阅收入",
+        "percentage": 70,
+        "2024_forecast": 17592000,
+        "2025_forecast": 42000000
+      },
+      {
+        "stream": "增值服务",
+        "percentage": 20,
+        "2024_forecast": 5026000,
+        "2025_forecast": 12000000
+      },
+      {
+        "stream": "广告收入",
+        "percentage": 10,
+        "2024_forecast": 2513000,
+        "2025_forecast": 6000000
+      }
+    ],
+
+    "revenue_chart": {
+      "title": "收入预测",
+      "x_axis": "季度",
+      "y_axis": "收入（美元）",
+      "series": [
+        { "name": "MRR", "data": [750000, 1071000, 1485000, 2088000] },
+        { "name": "ARR", "data": [9000000, 12852000, 17820000, 25056000] }
+      ]
+    }
+  },
+
+  "scenario_analysis": {
+    "scenarios": [
+      {
+        "name": "乐观场景",
+        "probability": 0.25,
+        "description": "市场快速增长，竞争较少，执行顺利",
+        "assumptions": {
+          "growth_rate": 0.25,
+          "arpu": 120,
+          "conversion_rate": 0.20
+        },
+        "outcomes": {
+          "users_2025": 600000,
+          "revenue_2025": 72000000,
+          "market_share": 0.08
+        }
+      },
+      {
+        "name": "基准场景",
+        "probability": 0.50,
+        "description": "按当前趋势发展",
+        "assumptions": {
+          "growth_rate": 0.15,
+          "arpu": 100,
+          "conversion_rate": 0.15
+        },
+        "outcomes": {
+          "users_2025": 420000,
+          "revenue_2025": 42000000,
+          "market_share": 0.05
+        }
+      },
+      {
+        "name": "悲观场景",
+        "probability": 0.25,
+        "description": "竞争加剧，增长放缓",
+        "assumptions": {
+          "growth_rate": 0.08,
+          "arpu": 85,
+          "conversion_rate": 0.12
+        },
+        "outcomes": {
+          "users_2025": 280000,
+          "revenue_2025": 21000000,
+          "market_share": 0.03
+        }
+      }
+    ],
+
+    "scenario_chart": {
+      "title": "情景分析 - 2025年用户数预测",
+      "scenarios": [
+        { "name": "乐观", "value": 600000, "color": "#2ecc71" },
+        { "name": "基准", "value": 420000, "color": "#3498db" },
+        { "name": "悲观", "value": 280000, "color": "#e74c3c" }
+      ]
+    }
+  },
+
+  "sensitivity_analysis": {
+    "parameters": [
+      {
+        "name": "用户增长率",
+        "base": 0.15,
+        "range": [0.08, 0.25],
+        "impact": "高"
+      },
+      {
+        "name": "ARPU",
+        "base": 100,
+        "range": [85, 120],
+        "impact": "中"
+      },
+      {
+        "name": "付费转化率",
+        "base": 0.15,
+        "range": [0.12, 0.20],
+        "impact": "高"
+      }
+    ],
+
+    "tornado_data": [
+      { "parameter": "用户增长率 (+20%)", "impact": 4200000 },
+      { "parameter": "用户增长率 (-20%)", "impact": -2800000 },
+      { "parameter": "付费转化率 (+20%)", "impact": 3500000 },
+      { "parameter": "付费转化率 (-20%)", "impact": -2800000 },
+      { "parameter": "ARPU (+20%)", "impact": 2100000 },
+      { "parameter": "ARPU (-20%)", "impact": -1750000 }
+    ]
+  },
+
+  "monte_carlo_simulation": {
+    "iterations": 10000,
+    "confidence_level": 95,
+
+    "input_distributions": [
+      {
+        "parameter": "用户增长率",
+        "distribution": "normal",
+        "mean": 0.15,
+        "std_dev": 0.03
+      },
+      {
+        "parameter": "ARPU",
+        "distribution": "normal",
+        "mean": 100,
+        "std_dev": 10
+      },
+      {
+        "parameter": "付费转化率",
+        "distribution": "beta",
+        "alpha": 3,
+        "beta": 17
+      }
+    ],
+
+    "output_distribution": {
+      "metric": "2025年收入",
+      "mean": 42000000,
+      "median": 41500000,
+      "std_dev": 8500000,
+      "min": 22000000,
+      "max": 75000000,
+      "percentiles": {
+        "p5": 28000000,
+        "p25": 36000000,
+        "p75": 48000000,
+        "p95": 58000000
+      }
+    },
+
+    "probability_targets": [
+      {
+        "target": "收入超过 5000万",
+        "probability": 0.28
+      },
+      {
+        "target": "收入超过 4000万",
+        "probability": 0.62
+      },
+      {
+        "target": "收入超过 3000万",
+        "probability": 0.85
+      }
+    ]
+  },
+
+  "key_drivers": {
+    "primary": [
+      {
+        "driver": "用户增长率",
+        "impact_score": 0.9,
+        "current_value": 0.15,
+        "potential": 0.25,
+        "recommendation": "增加营销投入，优化获客渠道"
+      },
+      {
+        "driver": "付费转化率",
+        "impact_score": 0.85,
+        "current_value": 0.15,
+        "potential": 0.20,
+        "recommendation": "优化定价策略，增加付费引导"
+      }
+    ],
+    "secondary": [
+      {
+        "driver": "用户留存",
+        "impact_score": 0.7,
+        "current_value": 0.75,
+        "potential": 0.85,
+        "recommendation": "加强用户运营，提升产品粘性"
+      },
+      {
+        "driver": "ARPU",
+        "impact_score": 0.6,
+        "current_value": 100,
+        "potential": 120,
+        "recommendation": "推出增值服务，优化套餐设计"
+      }
+    ]
+  },
+
+  "risk_factors": [
+    {
+      "risk": "市场竞争加剧",
+      "probability": 0.7,
+      "impact": "高",
+      "mitigation": "加强产品差异化，建立品牌护城河"
+    },
+    {
+      "risk": "经济下行影响付费意愿",
+      "probability": 0.4,
+      "impact": "中",
+      "mitigation": "优化定价，推出更灵活的付费方案"
+    },
+    {
+      "risk": "获客成本上升",
+      "probability": 0.6,
+      "impact": "中",
+      "mitigation": "多元化获客渠道，提升自然增长"
+    },
+    {
+      "risk": "技术变革导致产品过时",
+      "probability": 0.3,
+      "impact": "高",
+      "mitigation": "持续技术创新，保持产品竞争力"
+    }
+  ],
+
+  "recommendations": [
+    {
+      "priority": "P0",
+      "action": "加大营销投入",
+      "details": "将营销预算从当前的 50 万美元/月提升至 80 万美元/月，重点投入高转化渠道",
+      "expected_impact": "用户增长率提升至 20%+",
+      "investment": 3600000,
+      "timeline": "立即执行"
+    },
+    {
+      "priority": "P0",
+      "action": "优化付费转化流程",
+      "details": "简化付费流程，增加试用激励，优化定价套餐",
+      "expected_impact": "付费转化率从 15% 提升至 18%",
+      "investment": 200000,
+      "timeline": "3个月内"
+    },
+    {
+      "priority": "P1",
+      "action": "推出企业版产品",
+      "details": "开发面向大企业的定制化解决方案，提升 ARPU",
+      "expected_impact": "ARPU 从 100 美元提升至 130 美元",
+      "investment": 800000,
+      "timeline": "6个月内"
+    }
+  ]
+}
