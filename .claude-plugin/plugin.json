@@ -1,10 +1,10 @@
 {
   "name": "oh-my-pm-skills",
   "description": "面向产品经理的 AI 技能集合系统 - 从市场研究、JTBD分析、威胁建模到PRD生成的全流程支持",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Zhengyu Li",
-    "email": "noreply@github.com"
+    "email": "lizhengyu419@outlook.com"
   },
   "repository": "",
   "license": "MIT",

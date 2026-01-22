@@ -3,7 +3,7 @@
 > 面向产品经理的 AI 技能集合系统 - 从市场研究、JTBD分析、威胁建模到PRD生成的全流程支持
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/zhengyuli/oh-my-pm-skills)
+[![Version](https://img.shields.io/badge/version-1.0.1-green.svg)](https://github.com/zhengyuli/oh-my-pm-skills)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-purple.svg)](https://code.anthropic.com)
 
 ---
