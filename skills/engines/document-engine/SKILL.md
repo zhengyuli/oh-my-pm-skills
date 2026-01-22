@@ -494,6 +494,8 @@ def hello():
 
 ## 最佳实践
 
+核心原则（详见 `shared/common-sections.yaml#best_practices.documentation`）：
+
 ✅ **DO**:
 - 使用一致的标题层级
 - 保持每行 < 100 字符
@@ -506,7 +508,6 @@ def hello():
 - 混用不同的列表样式
 - 忽略可访问性
 - 硬编码路径和 URL
-- 跳过版本控制
 
 ## 集成点
 

@@ -647,6 +647,8 @@ orchestrator:
 
 ## 最佳实践
 
+核心原则（详见 `shared/common-sections.yaml#best_practices.orchestration`）：
+
 ✅ **DO**:
 - 使用预定义工作流
 - 监控工作流执行
@@ -659,7 +661,6 @@ orchestrator:
 - 创建循环依赖
 - 忽视错误处理
 - 跳过数据验证
-- 硬编码工作流
 
 ## 集成点
 

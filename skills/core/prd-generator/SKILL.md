@@ -525,10 +525,10 @@ PRD Generator:
 
 ## 最佳实践
 
+核心原则（详见 `shared/common-sections.yaml#best_practices.generation`）：
+
 ✅ **DO**:
 - 从 Lean PRD 开始，逐步完善
-- 用 QA Engine 验证完整性
-- 使用 Scoring Engine 排序功能
 - 为每个功能定义验收标准
 - 定期更新 PRD
 
@@ -536,8 +536,6 @@ PRD Generator:
 - 跳过问题收集直接生成
 - 使用模糊的验收标准
 - 忽视非功能需求
-- 安全产品跳过安全章节
-- 一次生成过多细节
 
 ## 输出格式
 

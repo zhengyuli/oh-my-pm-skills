@@ -740,6 +740,8 @@ Security Use Case Generator:
 
 ## 最佳实践
 
+核心原则（详见 `shared/common-sections.yaml#best_practices.security_testing`）：
+
 ✅ **DO**:
 - 从信息收集开始
 - 结合自动化和手动测试
@@ -752,7 +754,6 @@ Security Use Case Generator:
 - 忽视业务逻辑
 - 在生产环境测试
 - 跳过授权测试
-- 不记录测试结果
 
 ## 输出格式
 
