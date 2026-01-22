@@ -33,12 +33,31 @@ skills/engines/template-engine
 
 ## 输出文档包
 
-1. **PRD 文档** - `prd-complete.md` (使用 prd-security 模板)
-2. **市场研究报告** - `market-analysis.md`
-3. **JTBD 分析报告** - `jtbd-deep-dive.md`
-4. **增长预测报告** - `growth-projection.md`
-5. **威胁建模报告** - `threat-model.md`
-6. **执行摘要** - `EXECUTIVE_SUMMARY.md`
+**⚠️ 重要**: 所有输出遵循 `skills/shared/output-paths.yaml` 中定义的统一路径规范
+
+```
+outputs/
+├── prds/
+│   ├── YYYY-MM-DD-[project]-full-analysis-prd.md  (主 PRD 文档)
+│   └── EXECUTIVE_SUMMARY.md                       (执行摘要，覆盖写入)
+├── market-research/
+│   └── YYYY-MM-DD-[project]-market-research.md     (市场研究报告)
+├── jtbd/
+│   └── YYYY-MM-DD-[project]-jtbd-analysis.md       (JTBD 分析报告)
+├── forecasts/
+│   └── YYYY-MM-DD-[project]-growth-forecast.md     (增长预测报告)
+├── threat-models/
+│   └── YYYY-MM-DD-[project]-threat-model.md        (威胁建模报告)
+├── logs/
+│   └── YYYY-MMDD-pm-full-analysis-[project].log    (执行日志)
+└── references/
+    └── YYYY-MMDD-[project]-urls.md                 (参考文献 URLs 清单)
+```
+
+**参考文献**:
+- 所有搜索到的链接和引用汇总到 `outputs/references/YYYY-MMDD-[project]-urls.md`
+- 每个子报告末尾包含完整的参考文献章节
+- 主 PRD 文档汇总所有引用
 
 ## 开始
 

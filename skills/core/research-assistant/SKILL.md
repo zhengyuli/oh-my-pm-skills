@@ -195,15 +195,47 @@ model: inherit
 
 ### 最终输出
 
-- **文件**: `outputs/market-research/YYYY-MM-DD-[topic]-research.md`
-- **日志**: `outputs/logs/YYYY-MMDD-research-assistant-execution.log`
+**⚠️ 重要**: 必须遵循统一的输出路径规范（详见 `skills/shared/output-paths.yaml`）
+
+- **主报告**: `outputs/market-research/YYYY-MM-DD-[topic]-research.md`
+- **日志文件**: `outputs/logs/YYYY-MMDD-research-assistant-[topic].log`
 - **URL清单**: `outputs/references/YYYY-MMDD-[topic]-urls.md`
+
+**引用管理**:
+- 使用 `skills/shared/citation-manager.md` 中定义的引用格式标准
+- 每个数据点必须标注引用上标，如 `$42.5 亿 [Gartner 2024]¹`
+- 在报告末尾生成完整的参考文献章节
+- 生成独立的 URLs 清单文件
+
+**上下文传递**:
+```yaml
+输出到下一个技能的上下文:
+  citations: [...]  # 完整的引用列表
+  citation_counter: X  # 下一个引用的编号
+  market_research:
+    tam_size: "$42.5 亿"
+    tam_source: "[Gartner 2024]¹"
+    # ... 其他市场研究数据
+```
 
 **⚠️ 禁止行为**：
 - ❌ 仅依赖训练数据生成市场规模数字
 - ❌ 跳过工具调用步骤
 - ❌ 不标注数据来源
 - ❌ 不报告工具调用进度
+- ❌ 不保存到指定的 outputs/ 目录
+- ❌ 不生成参考文献章节
+- ❌ 不生成 URLs 清单文件
+- ❌ **不进行链接可访问性检测**
+- ❌ **使用 404、403、500 等失效链接**
+- ❌ **在最终报告中使用未验证或失效的引用**
+
+**链接可访问性检测要求**（详见 `skills/shared/citation-manager.md`）：
+- ✅ 每个链接必须使用 `mcp__fetch__fetch` 进行检测
+- ✅ 记录 HTTP 状态码、响应时间、检测时间
+- ✅ 404/403/500 等错误链接必须丢弃，搜索替代来源
+- ✅ 需要注册的链接必须提供可访问的备用链接
+- ✅ 在 URLs 清单中包含可访问性信息
 
 ## Core Process
 

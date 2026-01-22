@@ -1,0 +1,517 @@
+# Oh-My-PM-Skills 统一输出路径配置
+
+> **版本**: 1.0.0
+> **目的**: 为所有技能和命令提供统一的输出路径规范
+> **根目录**: `outputs/`
+
+---
+
+## 目录结构
+
+```
+outputs/
+├── market-research/       # 市场研究报告
+├── jtbd/                  # JTBD 分析报告
+├── threat-models/         # 威胁建模报告
+├── compliance/            # 合规检查报告
+├── forecasts/             # 增长预测报告
+├── analytics/             # 数据分析报告
+├── prds/                  # PRD 文档
+├── impact/                # 影响分析报告
+├── use-cases/             # 用例文档
+├── logs/                  # 执行日志
+└── references/            # 参考文献 URLs
+```
+
+---
+
+## 技能输出路径映射
+
+### 核心技能 (Core Skills)
+
+#### research-assistant
+
+```yaml
+输出目录: outputs/market-research/
+文件命名: YYYY-MM-DD-[topic]-research.md
+日志文件: outputs/logs/YYYY-MMDD-research-assistant-[topic].log
+URL清单: outputs/references/YYYY-MMDD-[topic]-urls.md
+
+示例:
+  - outputs/market-research/2025-01-22-cloud-security-research.md
+  - outputs/logs/2025-0122-research-assistant-cloud-security.log
+  - outputs/references/2025-0122-cloud-security-urls.md
+```
+
+#### jtbd-analyzer
+
+```yaml
+输出目录: outputs/jtbd/
+文件命名: YYYY-MM-DD-[product]-jtbd-analysis.md
+日志文件: outputs/logs/YYYY-MMDD-jtbd-analyzer-[product].log
+
+示例:
+  - outputs/jtbd/2025-01-22-notion-jtbd-analysis.md
+  - outputs/logs/2025-0122-jtbd-analyzer-notion.log
+```
+
+#### priority-evaluator
+
+```yaml
+输出目录: outputs/analytics/
+文件命名: YYYY-MM-DD-[project]-priority-evaluation.md
+日志文件: outputs/logs/YYYY-MMDD-priority-evaluator-[project].log
+
+示例:
+  - outputs/analytics/2025-01-22-project-x-priority-evaluation.md
+  - outputs/logs/2025-0122-priority-evaluator-project-x.log
+```
+
+#### prd-generator
+
+```yaml
+输出目录: outputs/prds/
+文件命名: YYYY-MM-DD-[project]-prd-[type].md
+  类型: lean, standard, security
+日志文件: outputs/logs/YYYY-MMDD-prd-generator-[project].log
+
+示例:
+  - outputs/prds/2025-01-22-project-x-prd-security.md
+  - outputs/logs/2025-0122-prd-generator-project-x.log
+```
+
+### 分析引擎 (Engines)
+
+#### analytics-engine
+
+```yaml
+输出目录: outputs/analytics/
+文件命名: YYYY-MM-DD-[topic]-analytics.md
+日志文件: outputs/logs/YYYY-MMDD-analytics-engine-[topic].log
+
+示例:
+  - outputs/analytics/2025-01-22-user-growth-analytics.md
+  - outputs/logs/2025-0122-analytics-engine-user-growth.log
+```
+
+#### forecast-engine
+
+```yaml
+输出目录: outputs/forecasts/
+文件命名: YYYY-MM-DD-[project]-growth-forecast.md
+日志文件: outputs/logs/YYYY-MMDD-forecast-engine-[project].log
+
+示例:
+  - outputs/forecasts/2025-01-22-project-x-growth-forecast.md
+  - outputs/logs/2025-0122-forecast-engine-project-x.log
+```
+
+#### scoring-engine
+
+```yaml
+输出目录: outputs/analytics/
+文件命名: YYYY-MM-DD-[topic]-scoring-results.md
+日志文件: outputs/logs/YYYY-MMDD-scoring-engine-[topic].log
+
+示例:
+  - outputs/analytics/2025-01-22-feature-rice-scoring-results.md
+  - outputs/logs/2025-0122-scoring-engine-feature-rice.log
+```
+
+#### document-engine
+
+```yaml
+输出目录: 根据 document_type 决定
+  - prd: outputs/prds/
+  - threat_model: outputs/threat-models/
+  - jtbd_analysis: outputs/jtbd/
+  - compliance_report: outputs/compliance/
+  - analytics: outputs/analytics/
+
+文件命名: 由调用技能决定
+日志文件: outputs/logs/YYYY-MMDD-document-engine-[type].log
+```
+
+#### template-engine
+
+```yaml
+输出目录: 临时或由调用技能决定
+  - template-engine 本身不直接输出文件
+  - 渲染结果返回给调用技能
+  - 由调用技能的 document-engine 决定最终路径
+
+日志文件: outputs/logs/YYYY-MMDD-template-engine-[template].log
+```
+
+#### qa-engine
+
+```yaml
+输出目录: 通常不输出文件，返回问题列表
+  - 可选输出: outputs/analytics/YYYY-MM-DD-[topic]-questions.md
+
+日志文件: outputs/logs/YYYY-MMDD-qa-engine-[topic].log
+```
+
+### 安全技能 (Security Skills)
+
+#### threat-modeling
+
+```yaml
+输出目录: outputs/threat-models/
+文件命名: YYYY-MM-DD-[project]-stride-threat-model.md
+日志文件: outputs/logs/YYYY-MMDD-threat-modeling-[project].log
+
+示例:
+  - outputs/threat-models/2025-01-22-ecommerce-stride-threat-model.md
+  - outputs/logs/2025-0122-threat-modeling-ecommerce.log
+```
+
+#### compliance-checker
+
+```yaml
+输出目录: outputs/compliance/
+文件命名: YYYY-MM-DD-[project]-[framework]-checklist.md
+  框架: soc2, iso27001, gdpr, hipaa
+日志文件: outputs/logs/YYYY-MMDD-compliance-checker-[project].log
+
+示例:
+  - outputs/compliance/2025-01-22-project-x-soc2-checklist.md
+  - outputs/logs/2025-0122-compliance-checker-project-x.log
+```
+
+#### impact-analyzer
+
+```yaml
+输出目录: outputs/impact/
+文件命名: YYYY-MM-DD-[vulnerability]-impact-analysis.md
+日志文件: outputs/logs/YYYY-MMDD-impact-analyzer-[vulnerability].log
+
+示例:
+  - outputs/impact/2025-01-22-cve-2024-xxxx-impact-analysis.md
+  - outputs/logs/2025-0122-impact-analyzer-cve-2024-xxxx.log
+```
+
+#### security-use-case-generator
+
+```yaml
+输出目录: outputs/use-cases/
+文件命名: YYYY-MM-DD-[project]-security-test-cases.md
+日志文件: outputs/logs/YYYY-MMDD-security-use-case-[project].log
+
+示例:
+  - outputs/use-cases/2025-01-22-project-x-security-test-cases.md
+  - outputs/logs/2025-0122-security-use-case-project-x.log
+```
+
+---
+
+## 命令输出路径映射
+
+### PM-Full-Analysis
+
+```yaml
+输出目录: outputs/prds/ (主文档)
+           outputs/market-research/ (子报告)
+           outputs/jtbd/ (子报告)
+           outputs/forecasts/ (子报告)
+           outputs/threat-models/ (子报告)
+
+主文档: outputs/prds/YYYY-MM-DD-[project]-full-analysis-prd.md
+
+子报告:
+  - outputs/market-research/YYYY-MM-DD-[project]-market-research.md
+  - outputs/jtbd/YYYY-MM-DD-[project]-jtbd-analysis.md
+  - outputs/forecasts/YYYY-MM-DD-[project]-growth-forecast.md
+  - outputs/threat-models/YYYY-MM-DD-[project]-threat-model.md
+
+执行摘要: outputs/prds/EXECUTIVE_SUMMARY.md (覆盖写入)
+
+日志文件: outputs/logs/YYYY-MMDD-pm-full-analysis-[project].log
+
+URL清单: outputs/references/YYYY-MMDD-[project]-urls.md
+```
+
+### PM-Market-Research
+
+```yaml
+输出目录: outputs/market-research/
+
+主报告: outputs/market-research/YYYY-MM-DD-[topic]-market-research.md
+日志文件: outputs/logs/YYYY-MMDD-pm-market-research-[topic].log
+URL清单: outputs/references/YYYY-MMDD-[topic]-urls.md
+```
+
+### PM-JTBD
+
+```yaml
+输出目录: outputs/jtbd/
+
+主报告: outputs/jtbd/YYYY-MM-DD-[product]-jtbd-deep-dive.md
+日志文件: outputs/logs/YYYY-MMDD-pm-jtbd-[product].log
+```
+
+### PM-Threat-Model
+
+```yaml
+输出目录: outputs/threat-models/
+
+主报告: outputs/threat-models/YYYY-MM-DD-[project]-threat-model.md
+日志文件: outputs/logs/YYYY-MMDD-pm-threat-model-[project].log
+```
+
+### PM-Forecast
+
+```yaml
+输出目录: outputs/forecasts/
+
+主报告: outputs/forecasts/YYYY-MM-DD-[project]-growth-projection.md
+日志文件: outputs/logs/YYYY-MMDD-pm-forecast-[project].log
+```
+
+### PM-Analytics
+
+```yaml
+输出目录: outputs/analytics/
+
+主报告: outputs/analytics/YYYY-MM-DD-[project]-data-analytics.md
+日志文件: outputs/logs/YYYY-MMDD-pm-analytics-[project].log
+```
+
+### PM-Competitor
+
+```yaml
+输出目录: outputs/market-research/
+
+主报告: outputs/market-research/YYYY-MM-DD-[product]-competitor-analysis.md
+日志文件: outputs/logs/YYYY-MMDD-pm-competitor-[product].log
+URL清单: outputs/references/YYYY-MMDD-[product]-competitor-urls.md
+```
+
+### PM-PRD
+
+```yaml
+输出目录: outputs/prds/
+
+PRD文档: outputs/prds/YYYY-MM-DD-[project]-prd-complete.md
+  - 类型: 使用 prd-security 模板
+日志文件: outputs/logs/YYYY-MMDD-pm-prd-[project].log
+```
+
+---
+
+## 日志文件规范
+
+### 日志文件命名
+
+```yaml
+格式: YYYY-MMDD-[skill-name]-[context].log
+
+示例:
+  - 2025-0122-research-assistant-cloud-security.log
+  - 2025-0122-jtbd-analyzer-notion.log
+  - 2025-0122-threat-modeling-ecommerce.log
+```
+
+### 日志文件内容格式
+
+```markdown
+# 技能执行日志
+
+**技能名称**: {{skill_name}}
+**执行时间**: {{start_time}} - {{end_time}}
+**执行时长**: {{duration}} 秒
+**用户输入**: {{user_input}}
+
+---
+
+## 执行步骤
+
+{{#each steps}}
+### {{step_number}}. {{step_name}}
+**状态**: {{status}}
+**开始时间**: {{start_time}}
+**结束时间**: {{end_time}}
+**耗时**: {{duration}} 秒
+
+**输入**:
+{{input}}
+
+**输出**:
+{{output}}
+
+{{#if error}}
+**错误**:
+{{error}}
+{{/if}}
+
+{{/each}}
+
+---
+
+## 搜索记录
+
+{{#each searches}}
+### 搜索 {{@index}}
+- 工具: {{tool}}
+- 查询: {{query}}
+- 结果数: {{result_count}}
+- 时间: {{timestamp}}
+
+{{#if results}}
+结果:
+{{#each results}}
+- [{{title}}]({{url}})
+{{/each}}
+{{/if}}
+
+{{/each}}
+
+---
+
+## 引用收集
+
+收集到的引用: {{citation_count}} 个
+
+{{#each citations}}
+- [{{id}}] {{source}} {{year}}: {{title}}
+  URL: {{url}}
+{{/each}}
+
+---
+
+## 错误和警告
+
+{{#if errors}}
+### 错误
+{{#each errors}}
+- [{{timestamp}}] {{error}}
+{{/each}}
+{{/if}}
+
+{{#if warnings}}
+### 警告
+{{#each warnings}}
+- [{{timestamp}}] {{warning}}
+{{/each}}
+{{/if}}
+
+---
+
+## 输出文件
+
+- 主报告: {{report_path}}
+- 日志文件: {{log_path}}
+- URL清单: {{urls_path}}
+
+---
+
+*日志由 {{skill_name}} 自动生成*
+*版本: {{version}}*
+```
+
+---
+
+## 参考文献 URLs 文件规范
+
+### 文件命名
+
+```yaml
+格式: YYYY-MMDD-[topic]-urls.md
+
+示例:
+  - 2025-0122-cloud-security-urls.md
+  - 2025-0122-notion-competitor-urls.md
+```
+
+### 文件内容格式
+
+详见 `skills/shared/citation-manager.md` 中的"独立 URLs 清单文件"章节。
+
+---
+
+## 输出路径使用函数
+
+### 获取输出路径
+
+```python
+def get_output_path(skill_name, context, file_type='main'):
+    """
+    获取技能的输出路径
+
+    参数:
+        skill_name: 技能名称
+        context: 执行上下文
+        file_type: 文件类型 ('main', 'log', 'urls')
+
+    返回:
+        完整的输出文件路径
+    """
+    from datetime import datetime
+
+    date_str = datetime.now().strftime('%Y-%m-%d')
+    log_date_str = datetime.now().strftime('%Y-%m%d')
+
+    # 获取主题/项目名称
+    topic = context.get('topic', 'unknown')
+    project = context.get('project_name', topic)
+
+    # 根据技能类型确定目录
+    skill_configs = {
+        'research-assistant': {
+            'dir': 'market-research',
+            'main': f'{date_str}-{topic}-research.md',
+            'log': f'{log_date_str}-research-assistant-{topic}.log',
+            'urls': f'{log_date_str}-{topic}-urls.md',
+        },
+        'jtbd-analyzer': {
+            'dir': 'jtbd',
+            'main': f'{date_str}-{project}-jtbd-analysis.md',
+            'log': f'{log_date_str}-jtbd-analyzer-{project}.log',
+        },
+        # ... 其他技能配置
+    }
+
+    config = skill_configs.get(skill_name, {})
+    directory = f"outputs/{config.get('dir', 'misc')}"
+
+    if file_type == 'main':
+        filename = config.get('main', f'{date_str}-{file_type}.md')
+    elif file_type == 'log':
+        return f"outputs/logs/{config.get('log', f'{log_date_str}-{skill_name}.log')}"
+    elif file_type == 'urls':
+        return f"outputs/references/{config.get('urls', f'{log_date_str}-urls.md')}"
+    else:
+        filename = f'{date_str}-{file_type}.md'
+
+    return f"{directory}/{filename}"
+```
+
+### 确保目录存在
+
+```python
+def ensure_output_directory(file_path):
+    """
+    确保输出目录存在，不存在则创建
+
+    参数:
+        file_path: 完整文件路径
+    """
+    import os
+
+    directory = os.path.dirname(file_path)
+    if directory and not os.path.exists(directory):
+        os.makedirs(directory, exist_ok=True)
+```
+
+---
+
+## 版本历史
+
+| 版本 | 日期 | 变更 |
+|------|------|------|
+| 1.0.0 | 2025-01-22 | 初始版本 - 定义统一输出路径规范 |
+
+---
+
+*此配置文件是 Oh-My-PM-Skills 技能系统的一部分*
+*版本: 1.0.0 | 最后更新: 2025-01-22*

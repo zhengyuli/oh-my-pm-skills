@@ -66,6 +66,7 @@ graph TD
     Skills --> Core_Skills["core/ 核心技能"]
     Skills --> Engines["engines/ 引擎"]
     Skills --> Security_Skills["security/ 安全技能"]
+    Skills --> Shared["shared/ 共享组件"]
 
     Core_Skills --> Research["research-assistant"]
     Core_Skills --> JTBD["jtbd-analyzer"]
@@ -84,9 +85,14 @@ graph TD
     Security_Skills --> Impact["impact-analyzer"]
     Security_Skills --> Security_UC["security-use-case-generator"]
 
+    Shared --> CitationMgr["citation-manager 引用管理"]
+    Shared --> OutputPaths["output-paths.yaml 路径配置"]
+    Shared --> SharedREADME["README 共享组件说明"]
+
     click Templates "./templates/CLAUDE.md" "查看模板模块文档"
     click Commands "./commands/CLAUDE.md" "查看命令模块文档"
     click Skills "./skills/CLAUDE.md" "查看技能模块文档"
+    click Shared "./skills/shared/README.md" "查看共享组件文档"
 ```
 
 ---
@@ -100,6 +106,8 @@ graph TD
 | **核心技能** | `skills/core/` | 研究、JTBD、优先级、PRD生成 | 已扫描 |
 | **分析引擎** | `skills/engines/` | 数据分析、预测、评分、模板渲染 | 已扫描 |
 | **安全技能** | `skills/security/` | 威胁建模、合规检查、影响分析 | 已扫描 |
+| **共享组件** | `skills/shared/` | 引用管理、输出路径配置 | 新增 |
+| **测试套件** | `tests/` | 链接可访问性检测测试用例和脚本 | 新增 |
 
 ---
 
@@ -188,6 +196,31 @@ oh-my-pm-skills/
 
 ## 测试策略
 
+### 链接可访问性检测测试
+
+**测试套件**: `tests/citation-manager-test-cases.md`
+
+**测试范围**:
+- 单元测试: 链接检测函数、引用添加函数、替代来源搜索
+- 集成测试: 引用收集流程、失效链接处理、跨技能引用传递
+- 端到端测试: 完整研究流程、多技能协作
+- 性能测试: 批量检测性能、超时处理
+- 边界测试: 特殊URL、异常响应、并发处理
+
+**运行测试**:
+```bash
+# 安装测试依赖
+pip install -r requirements-test.txt
+
+# 运行所有测试
+python tests/run_citation_tests.py
+
+# 生成测试报告
+python tests/run_citation_tests.py --report --output test-results/report.md
+```
+
+详见: [测试文档](tests/README.md)
+
 ### 单元测试
 
 - 每个技能独立测试
@@ -210,6 +243,8 @@ oh-my-pm-skills/
 | 核心技能 | ✅ 已扫描 | 100% |
 | 分析引擎 | ✅ 已扫描 | 100% |
 | 安全技能 | ✅ 已扫描 | 100% |
+| 共享组件 | ✅ 新增 | 100% |
+| 测试套件 | ✅ 新增 | 31个测试用例 |
 
 ---
 

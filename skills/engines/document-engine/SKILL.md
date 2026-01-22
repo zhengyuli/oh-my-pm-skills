@@ -518,6 +518,66 @@ def hello():
 - **security-use-case-generator**: 生成测试用例
 - **所有其他技能**: 文档格式化和输出
 
+---
+
+## 自动添加参考文献章节
+
+**⚠️ 重要**: 如果上下文中包含 `citations`，自动在报告末尾添加参考文献章节
+
+```yaml
+检测条件:
+  context.citations 存在且非空
+
+自动操作:
+  1. 在报告末尾添加"## 参考文献"章节
+  2. 按照 citation-manager.md 规范格式化引用
+  3. 按来源类型分组（权威机构、官方数据、投融资、媒体报道等）
+  4. 包含所有必需字段（URL、访问状态、验证状态等）
+
+格式示例:
+  ## 参考文献
+
+  ### 权威机构报告
+
+  [1] Gartner, Magic Quadrant for Cloud Security 2024
+      - 发布日期: 2024-06
+      - URL: https://www.gartner.com/en/documents/4123456
+      - 访问状态: 需要注册
+      - 备用链接: https://...
+      - 搜索日期: 2025-01-22
+      - 验证状态: 已验证
+      - 数据点: 市场规模、厂商排名
+
+  ### 公司官方数据
+
+  [2] Notion, Official Website
+      - 发布日期: 2024-12
+      - URL: https://www.notion.com/press
+      - 访问状态: 公开
+      - 搜索日期: 2025-01-22
+      - 验证状态: 已验证
+      - 数据点: 用户数量
+```
+
+---
+
+## 输出路径规范
+
+**⚠️ 重要**: 所有输出必须遵循 `skills/shared/output-paths.yaml` 中定义的路径规范
+
+```yaml
+核心原则:
+  1. 所有报告输出到 outputs/ 下的相应子目录
+  2. 所有日志输出到 outputs/logs/ 目录
+  3. 所有 URLs 清单输出到 outputs/references/ 目录
+  4. 文件命名遵循统一的日期前缀格式
+
+路径函数:
+  - 使用 get_output_path(skill_name, context, file_type)
+  - 自动确保目录存在
+  - 自动添加日期前缀
+```
+
 ## 测试示例
 
 ```bash

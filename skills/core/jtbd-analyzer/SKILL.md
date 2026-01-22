@@ -221,6 +221,27 @@ JTBD (Jobs-to-be-Done) 分析器负责深入理解用户真正的动机、待办
       action: "create"
       type: "jtbd_analysis"
       输出最终报告
+
+输出路径（遵循 skills/shared/output-paths.yaml）:
+  - 主报告: outputs/jtbd/YYYY-MM-DD-[product]-jtbd-analysis.md
+  - 日志文件: outputs/logs/YYYY-MMDD-jtbd-analyzer-[product].log
+```
+
+### 引用和数据来源
+
+**⚠️ 重要**: JTBD 分析可能引用市场数据和用户研究数据
+
+```yaml
+如果使用来自 research-assistant 的数据:
+  1. 接收上下文中的引用列表
+  2. 在相应数据点后添加引用标注
+  3. 在报告末尾生成"参考文献"章节
+
+如果需要搜索额外数据:
+  1. 使用搜索引擎获取数据
+  2. 按照 citation-manager.md 规范收集引用
+  3. 合并到现有引用列表中
+  4. 重新编号并生成参考文献章节
 ```
 
 ## JTBD 分析模板
