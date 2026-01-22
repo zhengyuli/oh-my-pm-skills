@@ -66,126 +66,64 @@ model: inherit
 
 ### 步骤 3: 收集评分数据
 
-#### RICE 数据收集模板
+#### RICE 数据收集
 
+使用 RICE 评分模型（定义详见 `shared/scoring-models.yaml#RICE`）：
+
+**快速参考**：
+- **Reach**: 每季度影响用户数 (0-∞)
+- **Impact**: 影响程度 (0.25=微, 0.5=小, 1=中, 2=大, 3=巨大)
+- **Confidence**: 信心程度 (0-100%)
+- **Effort**: 工作量 (人月)
+
+**数据收集模板**：
 ```yaml
 功能: {{feature_name}}
 
 Reach (触达):
-  问题: 每季度有多少用户/事务会用到？
-  估算:
-    - 总用户数: {{total_users}}
-    - 使用频率: {{frequency}} (每日/每周/每月/每季度)
-    - 计算: {{total_users}} × {{quarterly_periods}} = {{reach}}
-
-  数据来源:
-    - 现有数据分析
-    - 市场规模估算
-    - 用户调研
+  估算: {{total_users}} × {{frequency}} × {{quarterly_periods}}
+  数据来源: 现有数据/市场规模/用户调研
 
 Impact (影响):
-  问题: 对每个受影响用户有多大影响？
-  评分标准:
-    3 (巨大): 对 OKR 有决定性影响，显著改变用户行为
-    2 (大): 显著推动目标，明显改善体验
-    1 (中): 适度改善，有小幅提升
-    0.5 (小): 轻微改善，几乎无感知
-    0.25 (微): 几乎无影响
-
   选择: {{impact_score}}
   理由: {{rationale}}
 
 Confidence (信心):
-  问题: 对估算有多大把握？
-  评分标准:
-    100%: 有历史数据或 A/B 测试支持
-    80%: 有部分数据和用户验证
-    50%: 基于假设和经验，需要验证
-
   选择: {{confidence_percent}}%
   依据: {{basis}}
 
 Effort (工作量):
-  问题: 需要多少团队工作量？
-  估算:
-    - 设计: {{design_weeks}} 周
-    - 开发: {{dev_weeks}} 周
-    - 测试: {{qa_weeks}} 周
-    - 部署: {{deploy_weeks}} 周
-    - 总计: {{total_person_months}} 人月
-
-  考虑因素:
-    - 技术复杂度
-    - 依赖关系
-    - 风险因素
-
-RICE 分数: ({{reach}} × {{impact}} × {{confidence}}%) / {{effort}} = {{rice_score}}
+  总计: {{total_person_months}} 人月
+  考虑因素: 技术复杂度/依赖关系/风险因素
 ```
 
-#### ICE 数据收集模板
+#### ICE 数据收集
 
+使用 ICE 评分模型（定义详见 `shared/scoring-models.yaml#ICE`）：
+
+**快速参考**：
+- **Impact**: 1-10 (1-2=几乎无影响, 9-10=改变游戏规则)
+- **Confidence**: 1-10 (1-2=纯猜测, 9-10=有验证数据)
+- **Ease**: 1-10 (1-2=极难实现, 9-10=几乎零成本)
+
+**数据收集模板**：
 ```yaml
 功能: {{feature_name}}
 
-Impact (影响): {{score}} / 10
-  9-10: 改变游戏规则，对 OKR 有决定性影响
-  7-8: 显著改善，明显推动目标
-  5-6: 适度提升，有正面影响
-  3-4: 轻微改善，影响有限
-  1-2: 几乎无影响
-
-Confidence (信心): {{score}} / 10
-  9-10: 有验证数据支持，高度确信
-  7-8: 有部分验证，较有把握
-  5-6: 基于经验，有把握
-  3-4: 基于假设，有些不确定
-  1-2: 纯猜测，高度不确定
-
-Ease (容易度): {{score}} / 10
-  9-10: 几乎零成本，快速实现
-  7-8: 低成本，1-2 周内完成
-  5-6: 中等成本，1-2 个冲刺
-  3-4: 高成本，需要多个冲刺
-  1-2: 极难实现，需要大量资源
-
-ICE 分数: {{impact}} × {{confidence}} × {{ease}} = {{ice_score}}
+Impact: {{score}} / 10
+Confidence: {{score}} / 10
+Ease: {{score}} / 10
 ```
 
-#### MoSCoW 分类模板
+#### MoSCoW 分类
 
-```yaml
-功能: {{feature_name}}
+使用 MoSCoW 分类（定义详见 `shared/scoring-models.yaml#MoSCoW`）：
 
-分类: {{category}}
-
-Must Have (必须有):
-  定义: 没有它产品无法发布或没有价值
-  判断标准:
-    - 是核心价值主张吗？
-    - 用户会因为没有它而拒绝使用吗？
-    - 是 MVP 定义的一部分吗？
-
-Should Have (应该有):
-  定义: 重要但非必需，可以推迟到后续版本
-  判断标准:
-    - 显著改善用户体验吗？
-    - 有明确用户需求吗？
-    - 付出与回报成正比吗？
-
-Could Have (可以做):
-  定义: 有了会更好，如果时间允许
-  判断标准:
-    - 不错的功能，但非关键
-    - 实现成本低
-    - 可以放入待办事项
-
-Won't Have (不做):
-  定义: 明确排除，当前版本不考虑
-  判断标准:
-    - 与当前战略不一致
-    - 成本高于收益
-    - 技术上不可行
-```
+**快速参考**：
+- **Must Have**: 没有它产品无法发布
+- **Should Have**: 重要但非必需
+- **Could Have**: 有了会更好
+- **Won't Have**: 明确排除
 
 ### 步骤 4: 调用 Scoring Engine
 
@@ -239,105 +177,19 @@ scoring_engine:
 ### 评分分布
 
 **高优先级** ({{high_threshold}}+): {{count}} 个功能
-{{#each high_priority}}
-- {{name}} ({{score}})
-{{/each}}
-
 **中优先级** ({{medium_threshold}} - {{high_threshold}}): {{count}} 个功能
-{{#each medium_priority}}
-- {{name}} ({{score}})
-{{/each}}
-
 **低优先级** (< {{medium_threshold}}): {{count}} 个功能
-{{#each low_priority}}
-- {{name}} ({{score}})
-{{/each}}
 
 ---
 
 ## 详细分析
 
 {{#each features}}
-
 ### {{name}}
-
 **评分**: {{score}}
 **排名**: 第 {{rank}} 名
-
-**评分明细**:
-{{#if rice}}
-- Reach: {{reach}} (每季度 {{formatted_reach}} 个用户/事务)
-- Impact: {{impact}} ({{impact_description}})
-- Confidence: {{confidence}}% ({{confidence_basis}})
-- Effort: {{effort}} 人月 ({{effort_breakdown}})
-{{/if}}
-
-{{#if ice}}
-- Impact: {{impact}}/10 ({{impact_description}})
-- Confidence: {{confidence}}/10 ({{confidence_basis}})
-- Ease: {{ease}}/10 ({{ease_description}})
-{{/if}}
-
 **理由**: {{rationale}}
-
 **建议**: {{recommendation}}
-
----
-
-{{/each}}
-
-## 工作量分析
-
-### 快速胜利 (低投入高回报)
-
-{{#each quick_wins}}
-- {{name}} ({{effort}} 人月, 评分: {{score}})
-{{/each}}
-
-### 大型项目 (高投入高回报)
-
-{{#each big_bets}}
-- {{name}} ({{effort}} 人月, 评分: {{score}})
-{{/each}}
-
-### 低优先级 (低投入低回报)
-
-{{#each low_priority_items}}
-- {{name}} ({{effort}} 人月, 评分: {{score}})
-{{/each}}
-
-## 敏感性分析
-
-如果用户增长达到预期的 2 倍:
-{{#each sensitivity_2x}}
-- {{name}}: {{original}} → {{new}} (变化: {{delta}})
-{{/each}}
-
-如果信心水平下降 20%:
-{{#each sensitivity_confidence}}
-- {{name}}: {{original}} → {{new}} (变化: {{delta}})
-{{/each}}
-
-## 建议
-
-### 立即开始 (冲刺 1-2)
-{{#each immediate}}
-1. {{name}} - {{reason}}
-{{/each}}
-
-### 近期规划 (冲刺 3-4)
-{{#each short_term}}
-1. {{name}} - {{reason}}
-{{/each}}
-
-### 中期考虑 (下一季度)
-{{#each medium_term}}
-1. {{name}} - {{reason}}
-{{/each}}
-
-### 暂缓实施
-{{#each deferred}}
-1. {{name}} - {{reason}}
 {{/each}}
 
 ---
@@ -401,19 +253,19 @@ Priority Evaluator:
 
 ## 最佳实践
 
+核心原则（详见 `shared/common-sections.yaml#best_practices.scoring`）：
+
 ✅ **DO**:
 - 明确评分标准和假设
 - 记录数据来源和依据
 - 使用定性定量结合
 - 定期回顾和调整评分
-- 考虑团队容量和约束
 
 ❌ **DON'T**:
-- 盲目信任分数忽略上下文
+- 盲目信任分数，忽略上下文
 - 使用不一致的标准
 - 忽视定性因素
 - 不记录假设和推理
-- 过度优化评分模型
 
 ## 数据验证规则
 
@@ -501,3 +353,12 @@ priority-evaluator compare \
   --features features.json \
   --models rice,ice
 ```
+
+## 参考
+
+- 评分模型定义: shared/scoring-models.yaml
+  - RICE: shared/scoring-models.yaml#RICE
+  - ICE: shared/scoring-models.yaml#ICE
+  - MoSCoW: shared/scoring-models.yaml#MoSCoW
+  - Weighted: shared/scoring-models.yaml#Weighted
+- 最佳实践: shared/common-sections.yaml#best_practices.scoring

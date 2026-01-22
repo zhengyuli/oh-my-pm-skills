@@ -28,65 +28,32 @@ model: inherit
 
 ### 多搜索引擎策略
 
-本技能使用多搜索引擎交叉验证，确保数据质量和时效性：
+使用多搜索引擎策略（详见 `shared/search-strategies.yaml#multi_search_engine_strategy`）进行交叉验证，确保数据质量和时效性。
 
-1. **WebSearch**（主搜索）- 必须使用
-2. **mcp__tavily-search__search**（增强搜索）- 如果可用则使用
-3. **mcp__tavily-search__searchQNA**（事实验证）- 如果可用则使用
-4. **mcp__fetch__fetch**（内容抓取）- 如果可用则使用
+**快速参考**：
+- **WebSearch**（主搜索）- 必须使用
+- **Tavily Search**（增强搜索）- 如果可用则使用
+- **Tavily QNA**（事实验证）- 如果可用则使用
+- **mcp__fetch**（内容抓取）- 如果可用则使用
 
 ### 智能降级策略
 
-```yaml
-工具可用性检测:
-  检测方式: 尝试调用工具，捕获错误
-  降级触发: 工具返回"不可用"或超时
+智能降级策略（详见 `shared/search-strategies.yaml#intelligent_fallback_strategy`）：
 
-降级规则:
-  WebSearch 不可用:
-    行为: 报错并停止
-    原因: WebSearch 是必需工具
-    消息: "[错误] WebSearch 工具不可用，无法继续"
-
-  Tavily Search 不可用:
-    行为: 仅使用 WebSearch，继续执行
-    记录: "[警告] Tavily 不可用，使用基础搜索"
-    影响: 可能缺少深度数据和验证
-
-  Tavily QNA 不可用:
-    行为: 跳过验证步骤，继续执行
-    记录: "[信息] 未使用事实验证"
-    影响: 数据未经过独立验证
-
-  mcp__fetch__fetch 不可用:
-    行为: 仅记录 URL，不验证可访问性
-    记录: "[信息] 未验证链接可访问性"
-    影响: URL 可能失效或无法访问
-```
+**快速参考**：
+- WebSearch 不可用 → 报错停止
+- Tavily Search 不可用 → 继续执行，可能缺少深度数据
+- Tavily QNA 不可用 → 跳过验证，数据未独立验证
+- mcp__fetch 不可用 → 不验证链接，URL 可能失效
 
 ### 分层搜索策略
 
-根据数据重要性调整搜索深度：
+根据数据重要性调整搜索深度（详见 `shared/search-strategies.yaml#tiered_search_strategy`）：
 
-```yaml
-关键数据（必须高质量）:
-  类型: 市场规模 (TAM/SAM/SOM)、权威机构报告
-  搜索深度: 3 轮（WebSearch → Tavily → QNA验证）
-  URL验证: 必须验证
-  链接要求: 至少 1 个公开可访问链接
-
-重要数据（中高质量）:
-  类型: 竞品公司信息、增长率、受影响产品
-  搜索深度: 2 轮（WebSearch → Tavily）
-  URL验证: 推荐验证
-  链接要求: 提供链接即可
-
-辅助数据（基础质量）:
-  类型: 公司背景、案例研究、一般趋势
-  搜索深度: 1 轮（WebSearch）
-  URL验证: 可选
-  链接要求: 可选
-```
+**快速参考**：
+- **关键数据**（市场规模、权威报告）：3 轮搜索（WebSearch → Tavily → QNA验证）
+- **重要数据**（竞品信息、增长率）：2 轮搜索（WebSearch → Tavily）
+- **辅助数据**（公司背景、案例研究）：1 轮搜索（WebSearch）
 
 ### 执行流程（必须按顺序执行）
 

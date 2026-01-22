@@ -1,0 +1,508 @@
+# ============================================================================
+# 评分模型定义 (Scoring Models Definition)
+# ============================================================================
+# 用途：定义项目中使用的所有评分模型
+# 版本：1.0.0
+# 作者：oh-my-pm-skills
+#
+# 使用方法：
+#   在 SKILL.md 中通过相对路径引用：
+#   "详见 shared/scoring-models.yaml#RICE"
+#
+# 包含的模型：
+#   - RICE: 跨产品/功能对比优先级
+#   - ICE: 快速优先级评估
+#   - MoSCoW: 必须交付的功能集决策
+#   - DREAD: 安全威胁风险评估
+#   - CVSS: 安全漏洞影响评估
+#   - Weighted: 多维度权衡评分
+#
+# ============================================================================
+
+# ------------------------------------------------------------------------------
+# RICE 评分模型
+# ------------------------------------------------------------------------------
+# 用途：跨产品/功能对比优先级
+# 公式：RICE = (Reach × Impact × Confidence) / Effort
+# 适用场景：有用户数据、可估算工作量、需要跨团队对比
+# ------------------------------------------------------------------------------
+
+RICE:
+  name: "RICE 评分"
+  purpose: "跨产品/功能对比优先级"
+  formula: "RICE = (Reach × Impact × Confidence) / Effort"
+
+  dimensions:
+    Reach:
+      type: "number"
+      range: "0-∞"
+      description: "每季度影响用户/事务数"
+      question: "每季度有多少用户会用到？"
+      collection_methods:
+        - "现有用户数据分析"
+        - "市场规模估算"
+        - "用户调研反馈"
+        - "A/B 测试结果"
+
+    Impact:
+      type: "enum"
+      range: "0.25-3"
+      description: "对每个受影响用户的影响"
+      question: "对每个受影响用户有多大影响？"
+      scale:
+        3:
+          label: "巨大"
+          description: "对 OKR 有决定性影响，显著改变用户行为"
+        2:
+          label: "大"
+          description: "显著推动目标，明显改善体验"
+        1:
+          label: "中"
+          description: "适度改善，有小幅提升"
+        0.5:
+          label: "小"
+          description: "轻微改善，几乎无感知"
+        0.25:
+          label: "微"
+          description: "几乎无影响"
+
+    Confidence:
+      type: "percentage"
+      range: "0-100%"
+      description: "对数据的信心程度"
+      question: "对估算有多大把握？"
+      scale:
+        100%:
+          label: "高"
+          description: "有历史数据或 A/B 测试支持"
+        80%:
+          label: "中"
+          description: "有部分数据和用户验证"
+        50%:
+          label: "低"
+          description: "基于假设和经验"
+
+    Effort:
+      type: "number"
+      unit: "person-months"
+      description: "团队所需工作量"
+      question: "需要多少人月？"
+      considerations:
+        - "包含设计、开发、测试、部署"
+        - "以人月为单位"
+        - "考虑依赖和风险"
+
+  example:
+    feature: "用户批量导入"
+    values:
+      Reach: 2000
+      Impact: 3
+      Confidence: 80
+      Effort: 3
+    result: 1600
+    calculation: "(2000 × 3 × 0.8) / 3 = 1600"
+
+# ------------------------------------------------------------------------------
+# ICE 评分模型
+# ------------------------------------------------------------------------------
+# 用途：快速优先级评估，缺少数据时使用
+# 公式：ICE = Impact × Confidence × Ease
+# 适用场景：早期探索阶段、缺少定量数据、需要快速决策
+# ------------------------------------------------------------------------------
+
+ICE:
+  name: "ICE 评分"
+  purpose: "快速优先级评估，缺少数据时使用"
+  formula: "ICE = Impact × Confidence × Ease"
+
+  dimensions:
+    Impact:
+      type: "number"
+      range: "1-10"
+      description: "对目标指标的影响"
+      question: "多大程度推动 OKR？"
+      scale:
+        "9-10":
+          label: "改变游戏规则"
+          description: "对 OKR 有决定性影响"
+        "7-8":
+          label: "显著改善"
+          description: "明显推动目标"
+        "5-6":
+          label: "适度提升"
+          description: "有正面影响"
+        "3-4":
+          label: "轻微改善"
+          description: "影响有限"
+        "1-2":
+          label: "几乎无影响"
+          description: "无明显影响"
+
+    Confidence:
+      type: "number"
+      range: "1-10"
+      description: "成功/数据的确信度"
+      question: "有多大把握？"
+      scale:
+        "9-10":
+          label: "有验证数据"
+          description: "有验证数据支持，高度确信"
+        "7-8":
+          label: "有部分验证"
+          description: "有部分验证，较有把握"
+        "5-6":
+          label: "基于经验"
+          description: "基于经验，有把握"
+        "3-4":
+          label: "有假设"
+          description: "基于假设，有些不确定"
+        "1-2":
+          label: "纯猜测"
+          description: "纯猜测，高度不确定"
+
+    Ease:
+      type: "number"
+      range: "1-10"
+      description: "实施的难易程度"
+      question: "需要多少资源？"
+      scale:
+        "9-10":
+          label: "几乎零成本"
+          description: "几乎零成本，快速实现"
+        "7-8":
+          label: "低成本"
+          description: "低成本，1-2 周内完成"
+        "5-6":
+          label: "中等成本"
+          description: "中等成本，1-2 个冲刺"
+        "3-4":
+          label: "高成本"
+          description: "高成本，需要多个冲刺"
+        "1-2":
+          label: "极难实现"
+          description: "极难实现，需要大量资源"
+
+  example:
+    feature: "移动端优化"
+    values:
+      Impact: 8
+      Confidence: 7
+      Ease: 5
+    result: 280
+    calculation: "8 × 7 × 5 = 280"
+
+# ------------------------------------------------------------------------------
+# MoSCoW 分类
+# ------------------------------------------------------------------------------
+# 用途：必须交付的功能集决策
+# 适用场景：确定发布范围、资源硬约束、时间紧迫
+# ------------------------------------------------------------------------------
+
+MoSCoW:
+  name: "MoSCoW 分类"
+  purpose: "必须交付的功能集决策"
+
+  categories:
+    MustHave:
+      priority: 1
+      label: "必须有"
+      description: "没有它产品无法发布或没有价值"
+      criteria: "核心功能，缺失则产品无法使用"
+
+    ShouldHave:
+      priority: 2
+      label: "应该有"
+      description: "重要但非必需，可以推迟到后续版本"
+      criteria: "重要功能，但可以短期缺失"
+
+    CouldHave:
+      priority: 3
+      label: "可以有"
+      description: "有了会更好，如果时间允许"
+      criteria: "锦上添花的功能"
+
+    WontHave:
+      priority: 4
+      label: "不会有"
+      description: "明确排除，当前版本不考虑"
+      criteria: "明确不做的功能"
+
+  priority_order: "Must Have > Should Have > Could Have > Won't Have"
+
+# ------------------------------------------------------------------------------
+# DREAD 风险评估
+# ------------------------------------------------------------------------------
+# 用途：威胁建模中的风险评估
+# 公式：DREAD = (Damage + Reproducibility + Exploitability + Affected + Discoverability) / 5
+# 适用场景：安全威胁风险量化评估
+# ------------------------------------------------------------------------------
+
+DREAD:
+  name: "DREAD 风险评分"
+  purpose: "安全威胁风险评估"
+  formula: "DREAD = (Damage + Reproducibility + Exploitability + Affected + Discoverability) / 5"
+
+  dimensions:
+    Damage:
+      type: "number"
+      range: "1-10"
+      description: "潜在损害程度"
+      scale:
+        10:
+          label: "完全失控"
+          description: "完全失控，数据泄露"
+        7:
+          label: "严重损失"
+          description: "严重损失，核心功能失效"
+        5:
+          label: "中等损失"
+          description: "中等损失，部分功能受限"
+        3:
+          label: "轻微损失"
+          description: "轻微损失，影响有限"
+        1:
+          label: "几乎无影响"
+          description: "几乎无影响"
+
+    Reproducibility:
+      type: "number"
+      range: "1-10"
+      description: "可复现性"
+      scale:
+        10:
+          label: "100% 可重现"
+          description: "100% 可重现，必现"
+        7:
+          label: "特定条件"
+          description: "特定条件下可重现"
+        5:
+          label: "较难重现"
+          description: "较难重现"
+        1:
+          label: "几乎不可重现"
+          description: "几乎不可重现"
+
+    Exploitability:
+      type: "number"
+      range: "1-10"
+      description: "可利用性"
+      scale:
+        10:
+          label: "任何人都可以利用"
+          description: "任何人都可以利用"
+        7:
+          label: "需要专业技能"
+          description: "需要专业技能"
+        5:
+          label: "需要特定条件"
+          description: "需要特定条件"
+        1:
+          label: "极难利用"
+          description: "极难利用"
+
+    Affected:
+      type: "number"
+      range: "1-10"
+      description: "受影响用户比例"
+      scale:
+        10:
+          label: "所有用户"
+          description: "所有用户 (100%)"
+        8:
+          label: "大多数用户"
+          description: "大多数用户 (50-90%)"
+        6:
+          label: "部分用户"
+          description: "部分用户 (10-49%)"
+        4:
+          label: "少数用户"
+          description: "少数用户 (1-9%)"
+        2:
+          label: "极少数用户"
+          description: "极少数用户 (<1%)"
+        1:
+          label: "个别用户"
+          description: "个别用户"
+
+    Discoverability:
+      type: "number"
+      range: "1-10"
+      description: "可发现性"
+      scale:
+        10:
+          label: "公开已知"
+          description: "公开已知、有漏洞利用工具"
+        8:
+          label: "公开已知需定制"
+          description: "公开已知、需要定制"
+        6:
+          label: "可能发现"
+          description: "可能在公开渠道发现"
+        4:
+          label: "需要深入分析"
+          description: "需要深入分析"
+        2:
+          label: "难以发现"
+          description: "非常难以发现"
+        1:
+          label: "几乎不可能"
+          description: "几乎不可能发现"
+
+  risk_levels:
+    high:
+      range: "8-10"
+      label: "高风险"
+      action: "必须修复，阻塞发布，需要紧急处理"
+    medium:
+      range: "5-7"
+      label: "中风险"
+      action: "应该修复，计划修复，需要监控"
+    low:
+      range: "1-4"
+      label: "低风险"
+      action: "可以接受，记录备案，可选修复"
+
+# ------------------------------------------------------------------------------
+# CVSS v3.1 基础评分
+# ------------------------------------------------------------------------------
+# 用途：安全漏洞影响评估
+# 适用场景：已知漏洞的影响量化评估
+# ------------------------------------------------------------------------------
+
+CVSS:
+  name: "CVSS v3.1 漏洞评分"
+  purpose: "安全漏洞影响评估"
+
+  base_metrics:
+    AttackVector:
+      N:
+        value: 0.85
+        label: "网络攻击"
+        description: "攻击者可通过网络远程利用"
+      A:
+        value: 0.62
+        label: "相邻网络攻击"
+        description: "攻击者需要通过同一广播域或物理网络"
+      L:
+        value: 0.55
+        label: "本地攻击"
+        description: "攻击者需要本地访问"
+      P:
+        value: 0.2
+        label: "物理攻击"
+        description: "攻击者需要物理接触设备"
+
+    AttackComplexity:
+      L:
+        value: 0.77
+        label: "低复杂度"
+        description: "攻击利用的特殊条件不存在"
+      H:
+        value: 0.44
+        label: "高复杂度"
+        description: "攻击利用需要特殊条件"
+
+    PrivilegesRequired:
+      N:
+        value: 0.85
+        label: "无需权限"
+        description: "攻击者无需授权即可利用"
+      L:
+        value: 0.62
+        label: "低权限"
+        description: "攻击者需要基本用户权限"
+      H:
+        value: 0.27
+        label: "高权限"
+        description: "攻击者需要管理员权限"
+
+    UserInteraction:
+      N:
+        value: 0.85
+        label: "无需交互"
+        description: "利用漏洞不需要用户交互"
+      R:
+        value: 0.62
+        label: "需要交互"
+        description: "利用漏洞需要用户交互"
+
+    Scope:
+      U:
+        value: 1.0
+        label: "范围不变"
+        description: "漏洞利用不影响授权范围"
+      C:
+        value: 1.0
+        label: "范围改变"
+        description: "漏洞利用改变授权范围"
+
+    Impact:
+      H:
+        value: 0.56
+        label: "高影响"
+        description: "导致机密性、完整性或可用性严重丧失"
+      L:
+        value: 0.22
+        label: "低影响"
+        description: "导致机密性、完整性或可用性部分丧失"
+      N:
+        value: 0.0
+        label: "无影响"
+        description: "不影响机密性、完整性或可用性"
+
+  severity_levels:
+    critical:
+      range: "9.0-10.0"
+      label: "严重"
+    high:
+      range: "7.0-8.9"
+      label: "高危"
+    medium:
+      range: "4.0-6.9"
+      label: "中危"
+    low:
+      range: "0.1-3.9"
+      label: "低危"
+    info:
+      range: "0.0"
+      label: "信息级"
+
+# ------------------------------------------------------------------------------
+# 加权评分
+# ------------------------------------------------------------------------------
+# 用途：考虑多维度权衡的复杂决策
+# 公式：Score = ∑(Weight_i × Score_i)
+# 适用场景：多维度权衡、需要定制标准、复杂战略决策
+# ------------------------------------------------------------------------------
+
+Weighted:
+  name: "加权评分"
+  purpose: "多维度权衡的复杂决策"
+  formula: "Score = ∑(Weight_i × Score_i)"
+
+  example_dimensions:
+    Strategy:
+      weight: 0.25
+      label: "战略价值"
+      description: "与公司战略目标的契合度"
+    Customer:
+      weight: 0.30
+      label: "用户价值"
+      description: "对用户的价值和影响"
+    TechCost:
+      weight: 0.20
+      label: "技术成本"
+      description: "实现的技术难度和成本"
+    Business:
+      weight: 0.15
+      label: "商业价值"
+      description: "商业回报和收益"
+    Risk:
+      weight: 0.10
+      label: "风险"
+      description: "实施和运营风险"
+
+  notes:
+    - "权重总和应等于 1.0 (100%)"
+    - "每个维度的评分范围应保持一致 (如 1-10)"
+    - "可根据具体项目调整维度和权重"

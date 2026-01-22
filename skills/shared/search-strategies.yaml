@@ -1,0 +1,283 @@
+# ============================================================================
+# 搜索策略定义 (Search Strategies Definition)
+# ============================================================================
+# 用途：定义项目中使用的所有搜索策略
+# 版本：1.0.0
+# 作者：oh-my-pm-skills
+#
+# 使用方法：
+#   在 SKILL.md 中通过相对路径引用：
+#   "详见 shared/search-strategies.yaml#multi_search_engine_strategy"
+#
+# 包含的策略：
+#   - multi_search_engine_strategy: 多搜索引擎交叉验证
+#   - intelligent_fallback_strategy: 智能降级策略
+#   - tiered_search_strategy: 分层搜索策略
+#
+# ============================================================================
+
+# ------------------------------------------------------------------------------
+# 多搜索引擎策略
+# ------------------------------------------------------------------------------
+# 用途：使用多搜索引擎交叉验证，确保数据质量和时效性
+# 适用场景：市场研究、竞品分析、合规检查、预测分析
+# ------------------------------------------------------------------------------
+
+multi_search_engine_strategy:
+  name: "多搜索引擎策略"
+  purpose: "使用多搜索引擎交叉验证，确保数据质量和时效性"
+
+  engines:
+    primary:
+      name: "WebSearch"
+      required: true
+      purpose: "主搜索"
+      description: "必须使用的搜索工具"
+
+    secondary:
+      name: "mcp__tavily-search__search"
+      required: false
+      purpose: "增强搜索"
+      description: "如果可用则使用，提供深度搜索"
+
+    verification:
+      name: "mcp__tavily-search__searchQNA"
+      required: false
+      purpose: "事实验证"
+      description: "如果可用则使用，独立验证数据"
+
+    fetch:
+      name: "mcp__fetch__fetch"
+      required: false
+      purpose: "内容抓取"
+      description: "如果可用则使用，验证链接可访问性"
+
+  usage_notes:
+    - "WebSearch 是必需工具，不可用时报错停止"
+    - "Tavily Search 和 QNA 是可选的增强工具"
+    - "优先使用多搜索引擎交叉验证"
+    - "记录每个搜索工具的可用性和使用情况"
+
+# ------------------------------------------------------------------------------
+# 智能降级策略
+# ------------------------------------------------------------------------------
+# 用途：在工具不可用时优雅降级
+# 适用场景：任何使用多搜索引擎的技能
+# ------------------------------------------------------------------------------
+
+intelligent_fallback_strategy:
+  name: "智能降级策略"
+  purpose: "在工具不可用时优雅降级"
+
+  detection_method:
+    approach: "尝试调用工具，捕获错误"
+    trigger: "工具返回'不可用'或超时"
+
+  rules:
+    WebSearch_unavailable:
+      action: "error"
+      message: "[错误] WebSearch 工具不可用，无法继续"
+      reason: "WebSearch 是必需工具"
+      continue: false
+
+    Tavily_Search_unavailable:
+      action: "continue"
+      message: "[警告] Tavily 不可用，使用基础搜索"
+      impact: "可能缺少深度数据和验证"
+      continue: true
+
+    Tavily_QNA_unavailable:
+      action: "continue"
+      message: "[信息] 未使用事实验验"
+      impact: "数据未经过独立验证"
+      continue: true
+
+    mcp_fetch_unavailable:
+      action: "continue"
+      message: "[信息] 未验证链接可访问性"
+      impact: "URL 可能失效或无法访问"
+      continue: true
+
+  implementation_notes:
+    - "优先检查工具可用性"
+    - "清晰记录降级原因和影响"
+    - "关键工具缺失时停止执行"
+    - "可选工具缺失时继续但记录"
+
+# ------------------------------------------------------------------------------
+# 分层搜索策略
+# ------------------------------------------------------------------------------
+# 用途：根据数据重要性调整搜索深度
+# 适用场景：市场研究、合规检查、预测分析
+# ------------------------------------------------------------------------------
+
+tiered_search_strategy:
+  name: "分层搜索策略"
+  purpose: "根据数据重要性调整搜索深度"
+
+  tiers:
+    critical:
+      name: "关键数据"
+      description: "必须高质量的数据"
+      search_depth: 3
+      rounds:
+        - "WebSearch"
+        - "Tavily Search"
+        - "Tavily QNA 验证"
+      url_validation: "required"
+      link_requirement: "至少 1 个公开可访问链接"
+      examples:
+        - "市场规模 (TAM/SAM/SOM)"
+        - "权威机构报告 (Gartner/Forrester/IDC)"
+        - "法规更新"
+        - "安全漏洞公告"
+
+    important:
+      name: "重要数据"
+      description: "中高质量的数据"
+      search_depth: 2
+      rounds:
+        - "WebSearch"
+        - "Tavily Search"
+      url_validation: "recommended"
+      link_requirement: "提供链接即可"
+      examples:
+        - "竞品公司信息"
+        - "增长率"
+        - "受影响产品"
+        - "审计标准"
+        - "合规要求"
+
+    auxiliary:
+      name: "辅助数据"
+      description: "基础质量的数据"
+      search_depth: 1
+      rounds:
+        - "WebSearch"
+      url_validation: "optional"
+      link_requirement: "可选"
+      examples:
+        - "公司背景"
+        - "案例研究"
+        - "一般趋势"
+        - "合规工具"
+        - "培训资源"
+        - "行业新闻"
+
+  usage_notes:
+    - "根据数据类型选择合适的搜索深度"
+    - "关键数据必须进行 3 轮搜索和验证"
+    - "重要数据进行 2 轮搜索"
+    - "辅助数据进行 1 轮搜索即可"
+    - "记录每个数据的搜索深度和验证状态"
+
+# ------------------------------------------------------------------------------
+# 权威机构搜索策略
+# ------------------------------------------------------------------------------
+# 用途：针对权威咨询机构的专门搜索策略
+# 适用场景：市场研究、竞品分析
+# ------------------------------------------------------------------------------
+
+authoritative_research_strategy:
+  name: "权威机构搜索策略"
+  purpose: "搜索权威咨询机构的市场研究和报告"
+
+  institutions:
+    Gartner:
+      name: "Gartner Magic Quadrant"
+      search_queries:
+        - "Gartner [关键词] Magic Quadrant [当前年份]"
+        - "Gartner [关键词] [当前年份] market size vendors"
+        - "[关键词] market size [当前年份] according to Gartner report"
+      tier: "critical"
+      search_depth: 3
+
+    Forrester:
+      name: "Forrester Wave"
+      search_queries:
+        - "Forrester Wave [关键词] [当前年份]"
+        - "Forrester Wave [关键词] key findings"
+        - "[关键词] forecast [当前年份] according to Forrester"
+      tier: "critical"
+      search_depth: 3
+
+    IDC:
+      name: "IDC MarketScape"
+      search_queries:
+        - "IDC MarketScape [关键词] [当前年份]"
+        - "IDC [关键词] market forecast vendors"
+        - "[关键词] market share [当前年份] according to IDC"
+      tier: "critical"
+      search_depth: 3
+
+    CB_Insights:
+      name: "CB Insights"
+      search_queries:
+        - "CB Insights [关键词] market [当前年份]"
+        - "CB Insights [关键词] funding trends"
+      tier: "important"
+      search_depth: 2
+
+  implementation_notes:
+    - "每个机构进行 2-3 轮搜索"
+    - "最后一轮使用 QNA 进行验证"
+    - "记录数据来源和发布时间"
+    - "优先使用最新年份的报告"
+
+# ------------------------------------------------------------------------------
+# 公司数据收集策略
+# ------------------------------------------------------------------------------
+# 用途：收集上市公司和创业公司的数据
+# 适用场景：竞品分析、市场研究
+# ------------------------------------------------------------------------------
+
+company_data_collection_strategy:
+  name: "公司数据收集策略"
+  purpose: "收集上市公司和创业公司的财务和运营数据"
+
+  public_companies:
+    name: "上市公司数据收集"
+    tier: "critical"
+    search_depth: 3
+    sources:
+      - name: "SEC EDGAR"
+        url: "site:sec.gov EDGAR 10-K [当前年份]"
+        validation: true
+      - name: "公司官网"
+        search_query: "[公司名称] investor relations financial [当前年份]"
+        validation: true
+      - name: "财务新闻"
+        search_query: "[公司名称] annual revenue financial [当前年份]"
+        validation: false
+
+    data_points:
+      - "年度收入"
+      - "员工数量"
+      - "市场份额"
+      - "增长率"
+      - "主要产品"
+
+  startup_companies:
+    name: "创业公司数据收集"
+    tier: "important"
+    search_depth: 2
+    sources:
+      - name: "Crunchbase"
+        search_query: "[公司名称] Crunchbase funding valuation"
+        validation: false
+      - name: "公司官网"
+        search_query: "[公司名称] product features pricing"
+        validation: true
+
+    data_points:
+      - "融资信息"
+      - "估值"
+      - "投资者"
+      - "产品功能"
+      - "定价"
+
+  implementation_notes:
+    - "上市公司数据需要 3 轮搜索+验证"
+    - "创业公司数据进行 2 轮搜索"
+    - "优先使用官方数据源"
+    - "记录数据收集时间和来源"
