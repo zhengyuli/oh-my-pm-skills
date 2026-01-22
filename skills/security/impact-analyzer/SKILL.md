@@ -48,150 +48,22 @@ model: inherit
 
 ### 步骤 2: CVSS v3.1 评分
 
-#### CVSS 基础指标
+使用 CVSS v3.1 漏洞评分模型（定义详见 `shared/scoring-models.yaml#CVSS`）：
 
-```yaml
-Attack Vector (AV) - 攻击向量:
-  N (Network) - 网络攻击: 0.85
-    - 攻击者可远程利用
-    - 不需要物理访问或本地访问
+**快速参考**：
+- **评分范围**: 0.0 - 10.0
+- **严重性等级**:
+  - 9.0-10.0: 严重 (Critical) - 必须立即修复
+  - 7.0-8.9: 高危 (High) - 尽快修复
+  - 4.0-6.9: 中危 (Medium) - 应该修复
+  - 0.1-3.9: 低危 (Low) - 可以修复
 
-  A (Adjacent) - 相邻网络攻击: 0.62
-    - 需要同一广播域
-    - 如 WiFi、蓝牙
-
-  L (Local) - 本地攻击: 0.55
-    - 需要本地访问
-    - 如键盘、终端
-
-  P (Physical) - 物理攻击: 0.2
-    - 需要物理接触
-    - 如 USB 设备
-
-Attack Complexity (AC) - 攻击复杂度:
-  L (Low) - 低复杂度: 0.77
-    - 可以自动化利用
-    - 不需要特殊条件
-
-  H (High) - 高复杂度: 0.44
-    - 需要特定条件
-    - 难以自动化
-
-Privileges Required (PR) - 所需权限:
-  N (None) - 无需权限: 0.85
-    - 未认证用户即可利用
-
-  L (Low) - 低权限: 0.62
-    - 需要基本用户权限
-    - 非管理员
-
-  H (High) - 高权限: 0.27
-    - 需要管理员权限
-
-User Interaction (UI) - 用户交互:
-  N (None) - 无需交互: 0.85
-    - 不需要用户参与
-
-  R (Required) - 需要交互: 0.62
-    - 需要用户执行操作
-    - 如点击链接
-
-Scope (S) - 影响范围:
-  U (Unchanged) - 范围不变: 1.0
-    - 只影响 vulnerable component
-
-  C (Changed) - 范围改变: 1.0 (ISS 计算)
-    - 影响跨越 trust boundary
-    - 影响其他组件
-
-Impact (C/I/A) - 影响:
-
-  Confidentiality (C) - 机密性:
-    H (High) - 高影响: 0.56
-      完全 loss of confidentiality
-      所有数据泄露
-
-    L (Low) - 低影响: 0.22
-      部分数据泄露
-      有限访问
-
-    N (None) - 无影响: 0
-      不影响机密性
-
-  Integrity (I) - 完整性:
-    H (High) - 高影响: 0.56
-      完全 loss of integrity
-      所有数据可被修改
-
-    L (Low) - 低影响: 0.22
-      部分数据可被修改
-
-    N (None) - 无影响: 0
-      不影响完整性
-
-  Availability (A) - 可用性:
-    H (High) - 高影响: 0.56
-      完全 loss of availability
-      系统完全不可用
-
-    L (Low) - 低影响: 0.22
-      性能下降
-      部分功能不可用
-
-    N (None) - 无影响: 0
-      不影响可用性
-```
-
-#### CVSS 评分计算
-
-```yaml
-基础评分计算:
-
-Impact Subscore (ISS):
-  ISS = 1 - [(1 - ImpactC) × (1 - ImpactI) × (1 - ImpactA)]
-
-  范围: 0 - 1
-
-Impact:
-  如果 Scope = Unchanged:
-    Impact = ISS
-  如果 Scope = Changed:
-    Impact = 7.52 × (ISS - 0.029) - 3.25 × (ISS - 0.02)^15
-
-Exploitability:
-  Exploitability = 8.22 × AV × AC × PR × UI
-
-Base Score:
-  如果 Scope = Unchanged:
-    Base = min(10, Impact + Exploitability)
-  如果 Scope = Changed:
-    Base = min(10, 1.08 × (Impact + Exploitability))
-
-评分范围: 0.0 - 10.0
-```
-
-#### 严重性评级
-
-```yaml
-CVSS 评分 → 严重性:
-
-  9.0 - 10.0: 严重 (Critical)
-    - 必须立即修复
-    - 阻塞发布
-    - 需要紧急响应
-
-  7.0 - 8.9: 高危 (High)
-    - 尽快修复
-    - 优先处理
-    - 需要计划
-
-  4.0 - 6.9: 中危 (Medium)
-    - 应该修复
-    - 正常排期
-    - 监控状态
-
-  0.1 - 3.9: 低危 (Low)
-    - 可以修复
+**基础指标快速参考**：
+- **AV (Attack Vector)**: N(0.85) > A(0.62) > L(0.55) > P(0.2)
+- **AC (Attack Complexity)**: L(0.77) > H(0.44)
+- **PR (Privileges Required)**: N(0.85) > L(0.62) > H(0.27)
+- **UI (User Interaction)**: N(0.85) > R(0.62)
+- **Impact (C/I/A)**: H(0.56) > L(0.22) > N(0)
     - 低优先级
     - 记录备案
 

@@ -28,46 +28,32 @@ model: inherit
 
 ### 多搜索引擎策略
 
-1. **WebSearch**（主搜索）- 必须使用
-2. **mcp__tavily-search__search**（增强搜索）- 如果可用则使用
-3. **mcp__tavily-search__searchQNA**（事实验证）- 如果可用则使用
-4. **mcp__fetch__fetch**（验证链接可访问性）- 如果可用则使用
+使用多搜索引擎策略（详见 `shared/search-strategies.yaml#multi_search_engine_strategy`）进行交叉验证，确保预测数据的质量。
+
+**快速参考**：
+- **WebSearch**（主搜索）- 必须使用
+- **Tavily Search**（增强搜索）- 如果可用则使用
+- **Tavily QNA**（事实验证）- 如果可用则使用
+- **mcp__fetch**（验证链接）- 如果可用则使用
 
 ### 智能降级策略
 
-```yaml
-WebSearch 不可用:
-  行为: 报错并停止
-  原因: WebSearch 是必需工具
+智能降级策略（详见 `shared/search-strategies.yaml#intelligent_fallback_strategy`）：
 
-Tavily Search 不可用:
-  行为: 仅使用 WebSearch，继续执行
-  记录: "[警告] Tavily 不可用，使用基础搜索"
-
-Tavily QNA 不可用:
-  行为: 跳过验证步骤，继续执行
-  记录: "[信息] 未使用事实验证"
-
-mcp__fetch__fetch 不可用:
-  行为: 仅记录 URL，不验证可访问性
-  记录: "[信息] 未验证链接可访问性"
-```
+**快速参考**：
+- WebSearch 不可用 → 报错停止
+- Tavily Search 不可用 → 继续执行，可能缺少深度数据
+- Tavily QNA 不可用 → 跳过验证
+- mcp__fetch 不可用 → 不验证链接
 
 ### 分层搜索策略
 
-```yaml
-关键数据（预测模型输入）:
-  类型: 市场规模、增长率、类比产品数据
-  搜索深度: 3 轮（WebSearch → Tavily → QNA验证）
-  URL验证: 必须验证
-  链接要求: 至少 1 个公开可访问链接
+根据数据重要性调整搜索深度（详见 `shared/search-strategies.yaml#tiered_search_strategy`）：
 
-重要数据（预测参考）:
-  类型: 行业基准、历史趋势
-  搜索深度: 2 轮（WebSearch → Tavily）
-  URL验证: 推荐验证
-  链接要求: 提供链接即可
-```
+**快速参考**：
+- **关键数据**（市场规模、增长率）：3 轮搜索 + 链接验证
+- **重要数据**（行业基准、历史趋势）：2 轮搜索
+- **辅助数据**（案例研究、一般趋势）：1 轮搜索
 
 ### 执行流程
 
