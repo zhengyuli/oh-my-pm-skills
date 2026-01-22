@@ -890,7 +890,6 @@ result:
 - **research-assistant**: 市场规模预测
 - **prd-generator**: 成功指标和目标设定
 - **priority-evaluator**: 资源分配预测
-- **orchestrator**: 规划工作流
 
 ## 测试示例
 

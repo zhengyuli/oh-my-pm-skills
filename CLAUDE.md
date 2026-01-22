@@ -9,6 +9,7 @@
 | 版本 | 日期 | 变更 | 作者 |
 |------|------|------|------|
 | 1.0.0 | 2026-01-21 | 初始版本 - 项目 AI 上下文初始化 | AI Architect |
+| 1.0.1 | 2026-01-22 | 移除 orchestrator 模块，简化架构 | AI Architect |
 
 ---
 
@@ -37,7 +38,7 @@
 ### 设计原则
 
 1. **模块化**：每个技能独立运作，可单独调用
-2. **可组合**：通过 Orchestrator 组合多个技能形成工作流
+2. **可组合**：多个技能可组合使用完成复杂任务
 3. **模板驱动**：所有输出基于模板，保证格式一致性
 4. **安全内置**：安全考虑贯穿整个产品生命周期
 
@@ -65,7 +66,6 @@ graph TD
     Skills --> Core_Skills["core/ 核心技能"]
     Skills --> Engines["engines/ 引擎"]
     Skills --> Security_Skills["security/ 安全技能"]
-    Skills --> Orchestrator["orchestrator/ 编排器"]
 
     Core_Skills --> Research["research-assistant"]
     Core_Skills --> JTBD["jtbd-analyzer"]
@@ -87,7 +87,6 @@ graph TD
     click Templates "./templates/CLAUDE.md" "查看模板模块文档"
     click Commands "./commands/CLAUDE.md" "查看命令模块文档"
     click Skills "./skills/CLAUDE.md" "查看技能模块文档"
-    click Orchestrator "./skills/orchestrator/CLAUDE.md" "查看编排器文档"
 ```
 
 ---
@@ -101,7 +100,6 @@ graph TD
 | **核心技能** | `skills/core/` | 研究、JTBD、优先级、PRD生成 | 已扫描 |
 | **分析引擎** | `skills/engines/` | 数据分析、预测、评分、模板渲染 | 已扫描 |
 | **安全技能** | `skills/security/` | 威胁建模、合规检查、影响分析 | 已扫描 |
-| **编排器** | `skills/orchestrator/` | 技能编排、工作流定义 | 已扫描 |
 
 ---
 
@@ -131,12 +129,12 @@ PM-Analytics
 PM-Forecast
 ```
 
-### 3. 工作流示例
+### 3. 技能组合示例
 
 ```
 用户输入：产品想法
   ↓
-Orchestrator 自动激活
+技能组合调用
   ↓
 ┌─────────────────────────────────────┐
 │ 1. Research Assistant → 市场分析    │
@@ -167,8 +165,7 @@ oh-my-pm-skills/
 ├── skills/            # 技能实现
 │   ├── core/          # 核心技能
 │   ├── engines/       # 分析引擎
-│   ├── security/      # 安全技能
-│   └── orchestrator/  # 编排器
+│   └── security/      # 安全技能
 └── CLAUDE.md          # 本文档
 ```
 
@@ -213,7 +210,6 @@ oh-my-pm-skills/
 | 核心技能 | ✅ 已扫描 | 100% |
 | 分析引擎 | ✅ 已扫描 | 100% |
 | 安全技能 | ✅ 已扫描 | 100% |
-| 编排器 | ✅ 已扫描 | 100% |
 
 ---
 
@@ -264,7 +260,7 @@ model: inherit
 | "威胁建模" | `threat-modeling` |
 | "评估优先级" | `priority-evaluator` |
 | "分析数据" | `analytics-engine` |
-| "产品分析" | `orchestrator` (完整工作流) |
+| "产品分析" | 组合多个技能 |
 
 ### 工作流选择
 
@@ -272,7 +268,7 @@ model: inherit
 
 - **简单任务**：单技能调用
 - **中等任务**：2-3 个技能组合
-- **复杂任务**：完整工作流
+- **复杂任务**：多个技能组合调用
 
 ### 上下文传递
 
@@ -295,7 +291,6 @@ context:
 1. 在 `skills/` 下创建新目录
 2. 创建 `SKILL.md` 文件
 3. 定义技能元数据和流程
-4. 在 Orchestrator 中注册
 
 ### 添加新模板
 
@@ -330,10 +325,10 @@ context:
 
 ## 统计信息
 
-- **总文件数**：38 个
-- **已扫描文件**：38 个
+- **总文件数**：37 个（移除 orchestrator）
+- **已扫描文件**：37 个
 - **覆盖率**：100%
-- **技能数量**：13 个
+- **技能数量**：12 个
 - **模板数量**：11 个
 - **命令数量**：8 个
 

@@ -105,7 +105,7 @@ oh-my-pm-skills/
 │   ├── PM-Market-Research.md # 市场研究报告
 │   ├── PM-Competitor.md      # 竞品分析
 │   └── PM-Full-Analysis.md   # 一站式产品分析
-├── skills/                   # 15 个技能
+├── skills/                   # 14 个技能
 │   ├── core/                 # 核心技能 (4个)
 │   │   ├── research-assistant/     # 市场研究
 │   │   ├── jtbd-analyzer/          # JTBD 分析
@@ -123,7 +123,6 @@ oh-my-pm-skills/
 │   │   ├── compliance-checker/     # SOC2/ISO27001 合规
 │   │   ├── impact-analyzer/        # CVSS 影响分析
 │   │   └── security-use-case-generator/ # 安全用例生成
-│   └── orchestrator/          # 编排器 (1个)
 ├── templates/                # 11 个模板
 │   ├── prd/                  # PRD 模板
 │   ├── security/             # 安全模板
@@ -264,7 +263,7 @@ oh-my-pm-skills/
 ### 设计原则
 
 1. **模块化** - 每个技能独立运作，可单独调用
-2. **可组合** - 通过 Orchestrator 组合多个技能形成工作流
+2. **可组合** - 多个技能可组合使用完成复杂任务
 3. **模板驱动** - 所有输出基于模板，保证格式一致性
 4. **安全内置** - 安全考虑贯穿整个产品生命周期
 
@@ -310,7 +309,6 @@ research-assistant 技能集成了以下权威数据源：
    ---
    ```
 3. 定义技能流程和输出格式
-4. 在 Orchestrator 中注册（如需要）
 
 ### 添加新模板
 

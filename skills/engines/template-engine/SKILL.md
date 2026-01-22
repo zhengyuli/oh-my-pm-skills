@@ -315,7 +315,6 @@ cache:
 - **threat-modeling**: 渲染威胁模型报告
 - **compliance-checker**: 渲染合规清单
 - **security-use-case-generator**: 渲染测试用例
-- **orchestrator**: 渲染工作流模板
 
 ## 测试模板
 

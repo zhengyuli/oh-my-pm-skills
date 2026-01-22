@@ -351,7 +351,6 @@ result:
 - **jtbd-analyzer**: 深挖用户动机的问题
 - **threat-modeling**: 威胁建模的验证问题
 - **compliance-checker**: 合规检查清单
-- **orchestrator**: 工作流中的阶段性验证
 
 ## 测试示例
 
