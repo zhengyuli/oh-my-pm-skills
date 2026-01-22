@@ -4,7 +4,7 @@ description: 预测引擎 - TAM/SAM/SOM市场规模、用户增长(Logistic/Bass
 version: 1.0.0
 author: oh-my-pm-skills
 tags: [engine, forecast, prediction, trends, modeling, tam-sam-som, monte-carlo]
-allowed-tools: Read, Write, Edit
+allowed-tools: Read, Write, Edit, WebSearch, mcp__tavily-search__search, mcp__tavily-search__searchContext, mcp__tavily-search__searchQNA, mcp__fetch__fetch
 model: inherit
 ---
 
@@ -21,6 +21,129 @@ model: inherit
 - 趋势外推
 - 情景分析
 - 敏感性分析
+
+## Execution Instructions
+
+**IMPORTANT**: 必须使用多搜索引擎进行实际搜索和交叉验证，每个预测数据点必须包含可访问链接。
+
+### 多搜索引擎策略
+
+1. **WebSearch**（主搜索）- 必须使用
+2. **mcp__tavily-search__search**（增强搜索）- 如果可用则使用
+3. **mcp__tavily-search__searchQNA**（事实验证）- 如果可用则使用
+4. **mcp__fetch__fetch**（验证链接可访问性）- 如果可用则使用
+
+### 智能降级策略
+
+```yaml
+WebSearch 不可用:
+  行为: 报错并停止
+  原因: WebSearch 是必需工具
+
+Tavily Search 不可用:
+  行为: 仅使用 WebSearch，继续执行
+  记录: "[警告] Tavily 不可用，使用基础搜索"
+
+Tavily QNA 不可用:
+  行为: 跳过验证步骤，继续执行
+  记录: "[信息] 未使用事实验证"
+
+mcp__fetch__fetch 不可用:
+  行为: 仅记录 URL，不验证可访问性
+  记录: "[信息] 未验证链接可访问性"
+```
+
+### 分层搜索策略
+
+```yaml
+关键数据（预测模型输入）:
+  类型: 市场规模、增长率、类比产品数据
+  搜索深度: 3 轮（WebSearch → Tavily → QNA验证）
+  URL验证: 必须验证
+  链接要求: 至少 1 个公开可访问链接
+
+重要数据（预测参考）:
+  类型: 行业基准、历史趋势
+  搜索深度: 2 轮（WebSearch → Tavily）
+  URL验证: 推荐验证
+  链接要求: 提供链接即可
+```
+
+### 执行流程
+
+**步骤 1**：搜索市场规模数据（关键数据，3 轮搜索 + 链接验证）
+
+```yaml
+第一轮 - 主搜索:
+  工具: WebSearch
+  查询: "[关键词] market size [当前年份]"
+  记录: 记录所有找到的链接
+
+第二轮 - 增强搜索:
+  工具: mcp__tavily-search__search
+  查询: "[关键词] TAM SAM SOM [当前年份]"
+  补充: 补充更多数据源
+
+第三轮 - 链接验证:
+  工具: mcp__fetch__fetch
+  验证: 验证关键链接的可访问性
+  标注: 标注访问状态（公开/需要注册/付费/失效）
+```
+
+**步骤 2**：搜索行业增长率（关键数据，3 轮搜索）
+- 第一轮：`WebSearch` → `"[关键词] market growth rate CAGR [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"[关键词] industry forecast trends"`
+- 第三轮：`mcp__tavily-search__searchQNA` → 验证增长率数据
+
+**步骤 3**：搜索类比产品数据（重要数据，2 轮搜索）
+- 第一轮：`WebSearch` → `"[类比产品] growth trajectory case study"`
+- 第二轮：`mcp__tavily-search__search` → `"[类比产品] user adoption rate"`
+
+### 信息引用要求
+
+每个预测数据必须包含：
+```yaml
+预测数据: [数值]
+来源: [机构/分析师]
+发布日期: [YYYY-MM-DD]
+URL: [可访问的链接]
+访问状态: [公开/需要注册/付费]
+备用链接: [如果主要链接不可访问]
+搜索日期: [YYYY-MM-DD]
+```
+
+### 进度输出要求
+
+**Level 1：主要阶段进度（默认显示）**
+```markdown
+[阶段 1/2] 正在搜索市场数据和增长率...
+[阶段 1/2] ✓ 已完成市场规模和增长率数据收集
+[阶段 2/2] 正在分析类比产品数据...
+[阶段 2/2] ✓ 预测模型构建完成
+```
+
+**Level 2：详细进度（日志记录）**
+```markdown
+[搜索] 正在搜索市场规模数据...
+[完成] ✓ 已搜索市场数据 (WebSearch)
+[搜索] 正在使用 Tavily 深度搜索...
+[完成] ✓ Tavily 搜索完成
+[验证] 正在验证市场规模数据...
+[完成] ✓ 市场规模已验证: $XX 亿
+[链接] 正在验证链接可访问性...
+[完成] ✓ 链接已验证: https://... (公开)
+```
+
+### 最终输出
+
+- **文件**: `outputs/forecasts/YYYY-MMDD-[topic]-forecast.md`
+- **日志**: `outputs/logs/YYYY-MMDD-forecast-engine-execution.log`
+- **URL清单**: `outputs/references/YYYY-MMDD-[topic]-urls.md`
+
+**⚠️ 禁止行为**：
+- ❌ 仅依赖训练数据生成预测数字
+- ❌ 跳过工具调用步骤
+- ❌ 不标注数据来源
 
 ## Core Process
 

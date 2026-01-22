@@ -4,7 +4,7 @@ description: 合规检查专家 - SOC2/ISO27001/GDPR框架验证、检查清单�
 version: 1.0.0
 author: oh-my-pm-skills
 tags: [security, compliance, soc2, iso27001, gdpr, audit]
-allowed-tools: Read, Write, Edit
+allowed-tools: Read, Write, Edit, WebSearch, mcp__tavily-search__search, mcp__tavily-search__searchContext, mcp__tavily-search__searchQNA, mcp__fetch__fetch
 model: inherit
 ---
 
@@ -21,6 +21,250 @@ model: inherit
 - "GDPR 合规"
 - "安全合规"
 - "compliance check"
+
+## Execution Instructions
+
+**CRITICAL**: 合规框架和法规要求会频繁更新，必须通过实际网络搜索获取最新信息，禁止依赖训练数据生成合规要求。
+
+### 多搜索引擎策略
+
+合规检查使用多搜索引擎交叉验证，确保法规信息的准确性和时效性：
+
+1. **WebSearch**（主搜索）- 必须使用
+2. **mcp__tavily-search__search**（增强搜索）- 获取法规更新和官方解读
+3. **mcp__tavily-search__searchQNA**（事实验证）- 验证关键合规要求
+4. **mcp__fetch__fetch**（内容抓取）- 抓取官方法规文档
+
+### 智能降级策略
+
+```yaml
+工具可用性检测:
+  检测方式: 尝试调用工具，捕获错误
+  降级触发: 工具返回"不可用"或超时
+
+降级规则:
+  WebSearch 不可用:
+    行为: 报错并停止
+    原因: WebSearch 是必需工具
+    消息: "[错误] WebSearch 工具不可用，无法继续"
+
+  Tavily Search 不可用:
+    行为: 仅使用 WebSearch，继续执行
+    记录: "[警告] Tavily 不可用，使用基础搜索"
+    影响: 可能缺少深度数据和验证
+
+  Tavily QNA 不可用:
+    行为: 跳过验证步骤，继续执行
+    记录: "[信息] 未使用事实验证"
+    影响: 数据未经过独立验证
+
+  mcp__fetch__fetch 不可用:
+    行为: 仅记录 URL，不验证可访问性
+    记录: "[信息] 未验证链接可访问性"
+    影响: URL 可能失效或无法访问
+```
+
+### 分层搜索策略
+
+根据数据重要性调整搜索深度：
+
+```yaml
+关键合规数据（必须高质量）:
+  类型: 法规更新、官方标准、合规要求变更
+  搜索深度: 2-3 轮（WebSearch → Tavily → 官方文档验证）
+  时间范围: 最近 12 个月
+  来源优先级: 官方政府网站 > 国际标准组织 > 权威合规机构
+  URL验证: 推荐验证
+
+重要合规数据（中高质量）:
+  类型: 审计标准、检查清单、最佳实践
+  搜索深度: 2 轮（WebSearch → Tavily）
+  时间范围: 最近 24 个月
+  来源优先级: 专业咨询机构 > 行业协会 > 认证公司
+  URL验证: 可选
+
+辅助数据（基础质量）:
+  类型: 合规工具、培训资源、模板、案例
+  搜索深度: 1 轮（WebSearch）
+  时间范围: 无限制
+  来源优先级: 任何相关来源
+  URL验证: 可选
+```
+
+### 执行流程（必须按顺序执行）
+
+#### 阶段一：法规更新搜索
+
+**步骤 1.1**：搜索最新法规更新（关键数据，3 轮搜索）
+
+```yaml
+第一轮 - 主搜索:
+  工具: WebSearch
+  查询: "[框架名称] requirements update [当前年份]"
+  进度: [阶段 1/4] 正在搜索 [框架] 最新法规更新...
+  输出: [完成] ✓ 已搜索到 X 条更新
+
+第二轮 - 增强搜索（如果 Tavily 可用）:
+  工具: mcp__tavily-search__search
+  查询: "[框架名称] compliance changes [当前年份] official"
+  进度: [进度] 正在深度搜索法规变更细节...
+  输出: [完成] ✓ 补充了 X 项变更详情
+
+第三轮 - 官方验证（如果 Fetch 可用）:
+  工具: mcp__fetch__fetch
+  查询: 官方网站 URL（如 SOC 2: aicpa.org, GDPR: europa.eu, ISO: iso.org）
+  进度: [进度] 正在验证官方文档...
+  输出: [验证] ✓ 已验证官方要求版本
+```
+
+**步骤 1.2**：搜索审计标准更新（关键数据，3 轮搜索）
+- 第一轮：`WebSearch` → `"[框架] audit criteria [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"[框架] audit requirements checklist [当前年份]"`
+- 第三轮：`mcp__fetch__fetch` → 验证官方审计标准文档
+
+**步骤 1.3**：框架特定搜索
+
+对于 **SOC 2**:
+```yaml
+搜索重点:
+  - AICPA Trust Services Criteria 更新
+  - SOC 2 Guide 新版本
+  - 审计员解释公告
+官方来源: aicpa.org
+```
+
+对于 **GDPR**:
+```yaml
+搜索重点:
+  - EDPB 指南更新
+  - GDPR 第 29 条工作组文件
+  - 欧盟法院判例
+官方来源: europa.eu, edpb.europa.eu
+```
+
+对于 **ISO 27001**:
+```yaml
+搜索重点:
+  - ISO/IEC 27001:2022 更新
+  - ISO/IEC 27002 控制措施
+  - 认证机构要求
+官方来源: iso.org
+```
+
+#### 阶段二：行业最佳实践搜索
+
+**步骤 2.1**：搜索合规案例（重要数据，2 轮搜索）
+- 第一轮：`WebSearch` → `"[框架] compliance case studies [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"[框架] audit best practices lessons learned"`
+
+**步骤 2.2**：搜索常见问题和解决方案（重要数据，2 轮搜索）
+- 第一轮：`WebSearch` → `"[框架] common compliance challenges [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"[框架] audit failures remediation"`
+
+#### 阶段三：数据整合与标注
+
+**步骤 3.1**：交叉验证合规要求
+- 对比多个来源的合规要求
+- 如果要求一致：标注 "多源验证"
+- 如果要求存在差异：标注 "存在差异，以官方来源为准"
+
+**步骤 3.2**：标注数据质量
+```yaml
+每个合规要求必须标注:
+  来源: [官方文档 / 咨询机构 / 行业协会]
+  发布日期: [YYYY-MM]
+  更新状态: [最新 / 需要验证 / 已过期]
+  搜索方法: [WebSearch / Tavily / Fetch / QNA]
+  验证状态: [已验证 / 未验证]
+  URL: [官方文档链接（如果可用）]
+```
+
+### 进度输出要求
+
+**Level 1：主要阶段进度（默认显示）**
+```markdown
+[阶段 1/3] 正在搜索 [框架] 最新法规更新...
+[阶段 1/3] ✓ 已完成法规更新搜索，发现 X 项变更
+[阶段 2/3] 正在搜索行业最佳实践...
+[阶段 2/3] ✓ 已收集 X 个合规案例
+[阶段 3/3] 正在生成合规检查清单...
+[阶段 3/3] ✓ 合规报告已生成
+```
+
+**Level 2：详细进度（日志记录）**
+```markdown
+[搜索] 正在搜索 SOC 2 更新 (WebSearch)...
+[完成] ✓ 找到 X 条更新
+[搜索] 正在使用 Tavily 深度搜索...
+[完成] ✓ 补充了 X 项变更详情
+[验证] 正在验证 AICPA 官方文档...
+[完成] ✓ 已验证 Trust Services Criteria 版本: 2017 (最新更新: 2024-06)
+[链接] 已记录官方文档: https://www.aicpa.org/trust-services-criteria
+[搜索] 正在搜索审计标准...
+[完成] ✓ 已获取审计标准
+[搜索] 正在搜索行业案例...
+[完成] ✓ 已收集 X 个案例
+[生成] 正在生成合规检查清单...
+[完成] ✓ 检查清单已生成
+```
+
+### 信息引用要求
+
+**采用分层引用格式，平衡简洁性和可追溯性：**
+
+#### 报告主体中的引用（简洁）
+```markdown
+SOC 2 Type II 要求日志保留至少 90 天 [AICPA TSC 2017]¹。
+GDPR 要求数据泄露通知在 72 小时内完成 [GDPR Art. 33]²。
+ISO 27001:2022 要求至少每年进行管理评审 [ISO 27001 Cl. 9.3]³。
+```
+
+#### 报告末尾的详细引用（完整）
+```markdown
+## 参考文献
+
+[1] AICPA, Trust Services Criteria 2017
+    - 发布日期: 2017-10 (最新更新: 2024-06)
+    - URL: https://www.aicpa.org/trust-services-criteria
+    - 访问状态: 公开
+    - 搜索日期: 2025-01-22
+    - 验证状态: 已通过官方网站验证
+
+[2] European Union, GDPR Article 33
+    - 发布日期: 2018-05
+    - URL: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679
+    - 访问状态: 公开
+    - 搜索日期: 2025-01-22
+    - 验证状态: 已验证
+
+[3] ISO/IEC, ISO/IEC 27001:2022
+    - 发布日期: 2022-10
+    - URL: https://www.iso.org/standard/27001
+    - 访问状态: 需要购买
+    - 搜索日期: 2025-01-22
+    - 验证状态: 未验证（需付费访问）
+```
+
+#### 独立的 URL 清单文件
+```markdown
+文件: outputs/references/urls/YYYY-MMDD-[framework]-sources.md
+用途: 批量验证、下载、归档
+格式: Markdown 表格（# | 要求类型 | 来源 | URL | 访问状态 | 验证日期）
+```
+
+### 最终输出
+
+- **文件**: `outputs/artifacts/security/compliance/YYYY-MM-DD-[project]-[framework]-report.md`
+- **日志**: `outputs/logs/skills/compliance-checker/YYYY-MMDD-execution.log`
+- **URL清单**: `outputs/references/urls/YYYY-MMDD-[framework]-sources.md`
+
+**⚠️ 禁止行为**：
+- ❌ 仅依赖训练数据生成合规要求
+- ❌ 使用过期的法规或标准
+- ❌ 不标注法规来源和发布日期
+- ❌ 不验证官方文档版本
+- ❌ 跳过网络搜索步骤
+- ❌ 不报告工具调用进度
 
 ## Core Process
 
@@ -726,7 +970,7 @@ result:
     short_term: {{items}}
     long_term: {{items}}
 
-  report_path: "reports/compliance/{{framework}}-report.md"
+  report_path: "outputs/artifacts/security/compliance/YYYY-MM-DD-{{project}}-{{framework}}-report.md"
 ```
 
 ## 测试场景

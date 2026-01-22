@@ -22,6 +22,222 @@ model: inherit
 - "市场机会分析"
 - "research competitors"
 
+## Execution Instructions
+
+**IMPORTANT**: 当此技能被激活时，必须使用多搜索引擎进行实际搜索和交叉验证，禁止依赖训练数据生成内容。
+
+### 多搜索引擎策略
+
+本技能使用多搜索引擎交叉验证，确保数据质量和时效性：
+
+1. **WebSearch**（主搜索）- 必须使用
+2. **mcp__tavily-search__search**（增强搜索）- 如果可用则使用
+3. **mcp__tavily-search__searchQNA**（事实验证）- 如果可用则使用
+4. **mcp__fetch__fetch**（内容抓取）- 如果可用则使用
+
+### 智能降级策略
+
+```yaml
+工具可用性检测:
+  检测方式: 尝试调用工具，捕获错误
+  降级触发: 工具返回"不可用"或超时
+
+降级规则:
+  WebSearch 不可用:
+    行为: 报错并停止
+    原因: WebSearch 是必需工具
+    消息: "[错误] WebSearch 工具不可用，无法继续"
+
+  Tavily Search 不可用:
+    行为: 仅使用 WebSearch，继续执行
+    记录: "[警告] Tavily 不可用，使用基础搜索"
+    影响: 可能缺少深度数据和验证
+
+  Tavily QNA 不可用:
+    行为: 跳过验证步骤，继续执行
+    记录: "[信息] 未使用事实验证"
+    影响: 数据未经过独立验证
+
+  mcp__fetch__fetch 不可用:
+    行为: 仅记录 URL，不验证可访问性
+    记录: "[信息] 未验证链接可访问性"
+    影响: URL 可能失效或无法访问
+```
+
+### 分层搜索策略
+
+根据数据重要性调整搜索深度：
+
+```yaml
+关键数据（必须高质量）:
+  类型: 市场规模 (TAM/SAM/SOM)、权威机构报告
+  搜索深度: 3 轮（WebSearch → Tavily → QNA验证）
+  URL验证: 必须验证
+  链接要求: 至少 1 个公开可访问链接
+
+重要数据（中高质量）:
+  类型: 竞品公司信息、增长率、受影响产品
+  搜索深度: 2 轮（WebSearch → Tavily）
+  URL验证: 推荐验证
+  链接要求: 提供链接即可
+
+辅助数据（基础质量）:
+  类型: 公司背景、案例研究、一般趋势
+  搜索深度: 1 轮（WebSearch）
+  URL验证: 可选
+  链接要求: 可选
+```
+
+### 执行流程（必须按顺序执行）
+
+#### 第一阶段：权威咨询机构数据收集（多源搜索）
+
+**步骤 1.1**：搜索 Gartner Magic Quadrant（关键数据，3 轮搜索）
+
+```yaml
+第一轮 - 主搜索:
+  工具: WebSearch
+  查询: "Gartner [关键词] Magic Quadrant [当前年份]"
+  进度: [阶段 1/3] 正在搜索 Gartner Magic Quadrant...
+  输出: [完成] ✓ 已搜索 Gartner 报告，找到 X 个结果
+
+第二轮 - 增强搜索（如果 Tavily 可用）:
+  工具: mcp__tavily-search__search
+  查询: "Gartner [关键词] Magic Quadrant [当前年份] market size vendors"
+  进度: [进度] 正在使用 Tavily 深度搜索...
+  输出: [完成] ✓ Tavily 搜索完成，补充了 X 个数据点
+
+第三轮 - 事实验证（如果 Tavily QNA 可用）:
+  工具: mcp__tavily-search__searchQNA
+  查询: "[关键词] market size [当前年份] according to Gartner report"
+  进度: [进度] 正在验证 Gartner 市场规模数据...
+  输出: [验证] ✓ 市场规模数据已验证
+```
+
+**步骤 1.2**：搜索 Forrester Wave（关键数据，3 轮搜索）
+- 第一轮：`WebSearch` → `"Forrester Wave [关键词] [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"Forrester Wave [关键词] key findings"`
+- 第三轮：`mcp__tavily-search__searchQNA` → 验证关键数据
+
+**步骤 1.3**：搜索 IDC MarketScape（关键数据，3 轮搜索）
+- 第一轮：`WebSearch` → `"IDC MarketScape [关键词] [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"IDC [关键词] market forecast vendors"`
+- 第三轮：`mcp__tavily-search__searchQNA` → 验证预测数据
+
+**步骤 1.4**：搜索 CB Insights（重要数据，2 轮搜索）
+- 第一轮：`WebSearch` → `"CB Insights [关键词] market [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"CB Insights [关键词] funding trends"`
+
+#### 第二阶段：Top 10 公司数据收集
+
+**步骤 2.1**：识别竞品公司（重要数据，2 轮搜索）
+- 第一轮：`WebSearch` → `"[关键词] top companies [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"[关键词] leading vendors market leaders"`
+
+**步骤 2.2**：获取上市公司数据（关键数据，3 轮搜索+验证）
+- 第一轮：`WebSearch` → `"[公司名称] site:sec.gov EDGAR 10-K [当前年份]"`
+- 第二轮：`mcp__tavily-search__search` → `"[公司名称] annual revenue financial [当前年份]"`
+- 第三轮：`mcp__fetch__fetch` → 验证 SEC 链接可访问性
+
+**步骤 2.3**：获取创业公司数据（重要数据，2 轮搜索）
+- 第一轮：`WebSearch` → `"[公司名称] Crunchbase funding valuation"`
+- 第二轮：`mcp__tavily-search__search` → `"[公司名称] startup funding series [当前年份]"`
+
+**步骤 2.4**：抓取公司官网（辅助数据，1 轮搜索）
+- `mcp__web_reader__webReader`（如果可用）→ 抓取官网产品页面
+- 备用：`WebSearch` → `"[公司名称] product features pricing"`
+
+#### 第三阶段：数据整合与质量标注
+
+**步骤 3.1**：交叉验证市场规模数据
+- 对比 Gartner、Forrester、IDC 的数据
+- 如果差异 < 10%：标注 "数据一致"
+- 如果差异 10-30%：标注 "数据存在差异，取中位数"
+- 如果差异 > 30%：标注 "数据存在显著差异，建议进一步验证"
+
+**步骤 3.2**：标注数据质量
+```yaml
+每个数据点必须标注:
+  来源: [Gartner / Forrester / SEC / Crunchbase / 官网等]
+  发布日期: [YYYY-MM]
+  可靠性: [高 / 中 / 低]
+  搜索方法: [WebSearch / Tavily / QNA / Fetch]
+  验证状态: [已验证 / 未验证]
+```
+
+### 进度输出要求（分级）
+
+**Level 1：主要阶段进度（默认显示）**
+```markdown
+[阶段 1/3] 正在进行权威咨询机构数据收集...
+[阶段 1/3] ✓ 已完成 Gartner、Forrester、IDC 报告搜索
+[阶段 2/3] 正在收集 Top 10 竞品公司数据...
+[阶段 2/3] ✓ 已完成上市公司 + 创业公司数据收集
+[阶段 3/3] 正在验证和整合数据...
+[阶段 3/3] ✓ 数据验证完成，生成最终报告
+```
+
+**Level 2：详细进度（日志记录）**
+```markdown
+[搜索] 正在搜索 Gartner Magic Quadrant (WebSearch)...
+[完成] ✓ 找到 8 个结果
+[搜索] 正在使用 Tavily 深度搜索...
+[完成] ✓ 补充了 5 个数据点
+[验证] 正在验证市场规模数据...
+[完成] ✓ 市场规模已验证: $XX 亿
+[链接] 正在验证链接可访问性...
+[完成] ✓ Gartner 官方报告: https://... (需要注册)
+[完成] ✓ 备用公开来源: https://... (公开)
+```
+
+### 信息引用要求
+
+**采用分层引用格式，平衡简洁性和可追溯性：**
+
+#### 报告主体中的引用（简洁）
+```markdown
+市场规摸为 $42.5 亿 [Gartner 2024]¹，年增长率 18% [IDC 2024]²。
+```
+
+#### 报告末尾的详细引用（完整）
+```markdown
+## 参考文献
+
+[1] Gartner, Magic Quadrant for Cloud Security 2024
+    - 发布日期: 2024-06
+    - URL: https://www.gartner.com/en/documents/4123456
+    - 访问状态: 需要注册
+    - 备用: https://www.crowdstrike.com/blog/gartner-mq-2024 (公开)
+    - 搜索日期: 2025-01-22
+    - 验证状态: 已通过 Tavily QNA 验证
+
+[2] IDC, MarketScape for Cloud Security 2024
+    - 发布日期: 2024-05
+    - URL: https://www.idc.com/research/4123457
+    - 访问状态: 公开
+    - 搜索日期: 2025-01-22
+    - 验证状态: 未验证
+```
+
+#### 独立的 URL 清单文件
+```markdown
+文件: outputs/references/YYYY-MMDD-[topic]-urls.md
+用途: 批量验证、下载、归档
+格式: Markdown 表格（# | 数据类型 | 来源 | URL | 访问状态 | 备用链接）
+```
+
+### 最终输出
+
+- **文件**: `outputs/market-research/YYYY-MM-DD-[topic]-research.md`
+- **日志**: `outputs/logs/YYYY-MMDD-research-assistant-execution.log`
+- **URL清单**: `outputs/references/YYYY-MMDD-[topic]-urls.md`
+
+**⚠️ 禁止行为**：
+- ❌ 仅依赖训练数据生成市场规模数字
+- ❌ 跳过工具调用步骤
+- ❌ 不标注数据来源
+- ❌ 不报告工具调用进度
+
 ## Core Process
 
 ### 步骤 1: 定义研究目标
